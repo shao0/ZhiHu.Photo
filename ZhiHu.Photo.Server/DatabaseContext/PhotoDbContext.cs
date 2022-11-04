@@ -6,7 +6,7 @@ namespace ZhiHu.Photo.Server.DatabaseContext
     /// <summary>
     /// 
     /// </summary>
-    public class PhotoDbContext:DbContext
+    public class PhotoDbContext : DbContext
     {
         public PhotoDbContext(DbContextOptions<PhotoDbContext> options) : base(options)
         {
@@ -14,6 +14,18 @@ namespace ZhiHu.Photo.Server.DatabaseContext
         }
 
         public DbSet<AnswerEntity> Answer { get; set; }
+        public DbSet<ImageEntity> Image { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ImageEntity>()
+                .HasOne(i => i.Answer)
+                .WithMany(a => a.Images)
+                .HasForeignKey(i => i.AnswerId);
+        }
+
 
         public static readonly ILoggerFactory ConsoleLoggerFactory = LoggerFactory.Create(builder =>
         {

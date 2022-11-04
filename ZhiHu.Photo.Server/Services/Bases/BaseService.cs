@@ -4,12 +4,13 @@ using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Parameters;
 using ZhiHu.Photo.Server.DatabaseContext;
 using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
+using ZhiHu.Photo.Server.Entities.Bases;
 using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Services.Interfaces.Bases;
 
 namespace ZhiHu.Photo.Server.Services.Bases
 {
-    public class BaseService<T> : IBaseService<T> where T : class
+    public class BaseService<T> : IBaseService<T> where T : BaseEntity
     {
         protected readonly IUnitOfWork _work;
 
@@ -42,6 +43,7 @@ namespace ZhiHu.Photo.Server.Services.Bases
         public async Task<T> InsertAsync(T t)
         {
             if (t == null) throw new Exception("新增数据为空");
+            t.CreateDate = t.UpdateDate = DateTime.Now;
             await _work.GetRepository<T>().InsertAsync(t);
             await CommitAsync();
             return t;
@@ -53,6 +55,7 @@ namespace ZhiHu.Photo.Server.Services.Bases
 
             foreach (var t in tList)
             {
+                t.CreateDate = t.UpdateDate = DateTime.Now;
                 await _work.GetRepository<T>().InsertAsync(t);
             }
             await CommitAsync();
@@ -62,6 +65,7 @@ namespace ZhiHu.Photo.Server.Services.Bases
         public async Task<T> UpdateAsync(T t)
         {
             if (t == null) throw new Exception("更新数据为空");
+            t.UpdateDate = DateTime.Now;
             _work.GetRepository<T>().Update(t);
             await CommitAsync();
             return t;
@@ -73,6 +77,7 @@ namespace ZhiHu.Photo.Server.Services.Bases
 
             foreach (var t in tList)
             {
+                t.UpdateDate = DateTime.Now;
                 _work.GetRepository<T>().Update(t);
             }
             await CommitAsync();

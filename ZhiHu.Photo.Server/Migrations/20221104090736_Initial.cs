@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ZhiHu.Photo.Server.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,13 +29,14 @@ namespace ZhiHu.Photo.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Content = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    MediaCount = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MediaCount = table.Column<int>(type: "int", nullable: false),
                     ThanksCount = table.Column<int>(type: "int", nullable: false),
                     VoteUpCount = table.Column<int>(type: "int", nullable: false),
                     AnswerCreatedTimeStamp = table.Column<int>(type: "int", nullable: false),
                     AnswerUpdatedTimeStamp = table.Column<int>(type: "int", nullable: false),
                     Attachment = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    NextPageUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Json = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -46,10 +47,42 @@ namespace ZhiHu.Photo.Server.Migrations
                     table.PrimaryKey("PK_Answer", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Image",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    AnswerId = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreateDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Image_Answer_AnswerId",
+                        column: x => x.AnswerId,
+                        principalTable: "Answer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Image_AnswerId",
+                table: "Image",
+                column: "AnswerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Image");
+
             migrationBuilder.DropTable(
                 name: "Answer");
         }

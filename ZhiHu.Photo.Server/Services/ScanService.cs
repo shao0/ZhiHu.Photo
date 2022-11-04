@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
 using ZhiHu.Photo.Server.Entities;
 using ZhiHu.Photo.Server.Models.ZhiHu;
@@ -59,6 +60,8 @@ namespace ZhiHu.Photo.Server.Services
             {
                 try
                 {
+                    var zz = "img src=\"([\\s\\S]*?)\"";
+                    var regex = new Regex(zz);
                     var info = await GetZhiHuInfoAsync(url);
                     if (info != null)
                     {
@@ -77,6 +80,21 @@ namespace ZhiHu.Photo.Server.Services
                             }
                             entity.Json = info.Json;
                             entity.NextPageUrl = info.NextPage.NextUrl;
+                            var images = new List<ImageEntity>();
+                            if (!string.IsNullOrWhiteSpace(entity.Content))
+                            {
+                                var matches = regex.Matches(entity.Content);
+                                foreach (Match match in matches)
+                                {
+                                    var result = match.Result("$1");
+                                    if (result.StartsWith("https://"))
+                                    {
+                                        images.Add(new ImageEntity { Url = result });
+                                    }
+                                }
+
+                                entity.Images = images;
+                            }
                             answers.Add(entity);
                         }
 

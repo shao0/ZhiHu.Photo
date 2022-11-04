@@ -65,8 +65,8 @@ namespace ZhiHu.Photo.Common.Dtos
         public bool Attachment { get; set; }
 
         /// <summary>
-        /// Json
+        /// 图片集
         /// </summary>
-        public string Json { get; set; }
+        public ImageDto[]? Images { get; set; }
     }
 }

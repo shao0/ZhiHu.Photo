@@ -11,8 +11,8 @@ using ZhiHu.Photo.Server.DatabaseContext;
 namespace ZhiHu.Photo.Server.Migrations
 {
     [DbContext(typeof(PhotoDbContext))]
-    [Migration("20221030112119_initial")]
-    partial class initial
+    [Migration("20221104090736_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,7 +49,10 @@ namespace ZhiHu.Photo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("MediaCount")
+                    b.Property<int>("MediaCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NextPageUrl")
                         .HasColumnType("longtext");
 
                     b.Property<string>("NikeName")
@@ -73,6 +76,48 @@ namespace ZhiHu.Photo.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Answer");
+                });
+
+            modelBuilder.Entity("ZhiHu.Photo.Server.Entities.ImageEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AnswerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnswerId");
+
+                    b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("ZhiHu.Photo.Server.Entities.ImageEntity", b =>
+                {
+                    b.HasOne("ZhiHu.Photo.Server.Entities.AnswerEntity", "Answer")
+                        .WithMany("Images")
+                        .HasForeignKey("AnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Answer");
+                });
+
+            modelBuilder.Entity("ZhiHu.Photo.Server.Entities.AnswerEntity", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

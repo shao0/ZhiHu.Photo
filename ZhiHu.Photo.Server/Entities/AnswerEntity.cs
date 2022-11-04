@@ -74,5 +74,11 @@ namespace ZhiHu.Photo.Server.Entities
         /// Json
         /// </summary>
         public string Json { get; set; }
+
+        /// <summary>
+        /// 图片集合
+        /// </summary>
+        public IEnumerable<ImageEntity>? Images { get; set; } 
+
     }
 }

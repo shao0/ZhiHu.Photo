@@ -58,10 +58,5 @@ namespace ZhiHu.Photo.Models
         /// 判断是否是视频
         /// </summary>
         public bool Attachment { get; set; }
-
-        /// <summary>
-        /// Json
-        /// </summary>
-        public string Json { get; set; }
     }
 }
