@@ -18,5 +18,8 @@ namespace ZhiHu.Photo.Models
         /// </summary>
         public string Url { get; set; }
 
+
+
+
     }
 }

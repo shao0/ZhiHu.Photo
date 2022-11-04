@@ -15,6 +15,6 @@ namespace ZhiHu.Photo.Server.Services.Interfaces
         /// <typeparam name="T"></typeparam>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        Task<IPagedList<AnswerEntity>> QueryAnswerAndImageAsync(QueryParameter parameter);
+        Task<IPagedList<AnswerDto>> QueryAnswerAndImageAsync(QueryParameter parameter);
     }
 }

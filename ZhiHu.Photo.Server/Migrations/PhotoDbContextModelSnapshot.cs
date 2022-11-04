@@ -107,7 +107,7 @@ namespace ZhiHu.Photo.Server.Migrations
                     b.HasOne("ZhiHu.Photo.Server.Entities.AnswerEntity", "Answer")
                         .WithMany("Images")
                         .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Answer");

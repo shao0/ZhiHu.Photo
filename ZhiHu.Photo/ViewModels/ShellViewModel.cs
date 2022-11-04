@@ -9,10 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HandyControl.Controls;
+using HandyControl.Data;
 using HandyControl.Tools.Extension;
 using Newtonsoft.Json;
+using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Models;
+using ZhiHu.Photo.Extensions;
 using ZhiHu.Photo.Models;
 
 namespace ZhiHu.Photo.ViewModels
@@ -21,26 +25,43 @@ namespace ZhiHu.Photo.ViewModels
     public partial class ShellViewModel
     {
         private static string Url = "https://localhost:5001";
+        private int PageSize = 10;
         public ObservableCollection<AnswerInfo> Answers { get; set; } = new();
 
         [ObservableProperty] private string _json;
+
+        [ObservableProperty] private int _pageMax = 10;
+
+        [ObservableProperty] private int _pageIndex = 1;
 
         [RelayCommand]
         private async Task Query()
         {
             Answers.Clear();
-            var url = $"{Url}/api/Answer/GetAll?PageIndex=1&PageSize=30&Search=";
+            var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}&Search=";
             var client = new HttpClient();
             Json = await client.GetStringAsync(url);
-            var result = JsonConvert.DeserializeObject<ApiResponse<PagedList<AnswerInfo>>>(Json);
+            var result = JsonConvert.DeserializeObject<ApiResponse<PagedList<AnswerDto>>>(Json);
             if (result.Status)
             {
                 foreach (var answer in result.Data!.Items)
                 {
-                    Answers.Add(answer);
+                    Answers.Add(answer.Map<AnswerDto, AnswerInfo>());
                 }
+
+                PageMax = result.Data.TotalPages;
+            }
+            else
+            {
+
             }
         }
 
+        [RelayCommand]
+        private async Task PageUpdated(FunctionEventArgs<int> info)
+        {
+            PageIndex = info.Info;
+            await Query();
+        }
     }
 }

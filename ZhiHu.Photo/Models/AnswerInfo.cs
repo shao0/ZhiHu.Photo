@@ -25,11 +25,6 @@ namespace ZhiHu.Photo.Models
         public string? Excerpt { get; set; }
 
         /// <summary>
-        /// 内容
-        /// </summary>
-        public string? Content { get; set; }
-
-        /// <summary>
         /// 媒体数量
         /// </summary>
         public string? MediaCount { get; set; }
@@ -54,9 +49,7 @@ namespace ZhiHu.Photo.Models
         /// </summary>
         public int AnswerUpdatedTimeStamp { get; set; }
 
-        /// <summary>
-        /// 判断是否是视频
-        /// </summary>
-        public bool Attachment { get; set; }
+
+        public ImageInfo[]? Images { get; set; }
     }
 }

@@ -23,7 +23,8 @@ namespace ZhiHu.Photo.Server.DatabaseContext
             modelBuilder.Entity<ImageEntity>()
                 .HasOne(i => i.Answer)
                 .WithMany(a => a.Images)
-                .HasForeignKey(i => i.AnswerId);
+                .HasForeignKey(i => i.AnswerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
 

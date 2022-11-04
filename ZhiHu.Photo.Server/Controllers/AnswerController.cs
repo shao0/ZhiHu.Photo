@@ -28,7 +28,7 @@ namespace ZhiHu.Photo.Server.Controllers
         {
             try
             {
-                var list = await _service.QueryAsync(parameter);
+                var list = await _service.QueryAnswerAndImageAsync(parameter);
                 return new ApiResponse(true, list);
             }
             catch (Exception e)
@@ -46,7 +46,7 @@ namespace ZhiHu.Photo.Server.Controllers
         {
             try
             {
-               await _scan.ScanInsert();
+                await _scan.ScanInsert();
                 return new ApiResponse("已启动", true);
             }
             catch (Exception e)

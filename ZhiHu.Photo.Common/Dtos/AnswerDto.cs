@@ -30,14 +30,9 @@ namespace ZhiHu.Photo.Common.Dtos
         public string? Excerpt { get; set; }
 
         /// <summary>
-        /// 内容
-        /// </summary>
-        public string? Content { get; set; }
-
-        /// <summary>
         /// 媒体数量
         /// </summary>
-        public string? MediaCount { get; set; }
+        public int MediaCount { get; set; }
 
         /// <summary>
         /// 喜欢数
@@ -58,15 +53,9 @@ namespace ZhiHu.Photo.Common.Dtos
         /// 回答更新时间戳
         /// </summary>
         public int AnswerUpdatedTimeStamp { get; set; }
-
-        /// <summary>
-        /// 判断是否是视频
-        /// </summary>
-        public bool Attachment { get; set; }
-
         /// <summary>
         /// 图片集
         /// </summary>
-        public ImageDto[]? Images { get; set; }
+        public IEnumerable<ImageDto>? Images { get; set; }
     }
 }

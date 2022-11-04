@@ -89,7 +89,7 @@ namespace ZhiHu.Photo.Server.Services
                                     var result = match.Result("$1");
                                     if (result.StartsWith("https://"))
                                     {
-                                        images.Add(new ImageEntity { Url = result });
+                                        images.Add(new ImageEntity { Url = result, CreateDate = DateTime.Now, UpdateDate = DateTime.Now });
                                     }
                                 }
 

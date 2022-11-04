@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Interfaces;
@@ -18,23 +19,18 @@ namespace ZhiHu.Photo.Server.Services
 {
     public class AnswerService : BaseService<AnswerEntity>, IAnswerService
     {
+        private readonly IMapper _mapper;
 
-        public AnswerService(IUnitOfWork work) : base(work)
+        public AnswerService(IUnitOfWork work, IMapper mapper) : base(work)
         {
+            _mapper = mapper;
         }
 
-        public async Task<IPagedList<AnswerEntity>> QueryAnswerAndImageAsync(QueryParameter parameter)
+        public async Task<IPagedList<AnswerDto>> QueryAnswerAndImageAsync(QueryParameter parameter)
         {
-            var queryString = parameter.Search.QueryString<AnswerEntity>();
-            return await _work
-                .GetRepository<AnswerEntity>()
-                .GetAll()
-                .GroupJoin(_work.GetRepository<ImageEntity>().GetAll()
-                    , answer => answer
-                    , i => i.Answer
-                    , (a, images) => a).OrderBy(a => a.AnswerUpdatedTimeStamp)
-                .Where(queryString)
+            var pageList = await _work.GetRepository<AnswerEntity>().GetAll().OrderBy(a=> a.AnswerUpdatedTimeStamp).Include(a => a.Images)
                 .ToPagedListAsync(parameter.PageIndex, parameter.PageSize);
+            return _mapper.Map<PagedList<AnswerDto>>(pageList);
         }
     }
 }
