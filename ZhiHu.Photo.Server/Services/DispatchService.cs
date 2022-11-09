@@ -1,10 +1,12 @@
 ﻿using Quartz;
 using Quartz.Spi;
+using ZhiHu.Photo.Server.Models.Attributes;
 using ZhiHu.Photo.Server.Quartzs.Jobs;
 using ZhiHu.Photo.Server.Services.Interfaces;
 
 namespace ZhiHu.Photo.Server.Services
 {
+    [AutoInjection(ServiceLifetime.Singleton)]
     [PersistJobDataAfterExecution]
     public class DispatchService : IDispatchService
     {

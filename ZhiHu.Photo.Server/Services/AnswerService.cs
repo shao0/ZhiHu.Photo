@@ -11,12 +11,14 @@ using ZhiHu.Photo.Server.DatabaseContext;
 using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
 using ZhiHu.Photo.Server.Entities;
 using ZhiHu.Photo.Server.Extensions;
+using ZhiHu.Photo.Server.Models.Attributes;
 using ZhiHu.Photo.Server.Models.ZhiHu;
 using ZhiHu.Photo.Server.Services.Bases;
 using ZhiHu.Photo.Server.Services.Interfaces;
 
 namespace ZhiHu.Photo.Server.Services
 {
+    [AutoInjection]
     public class AnswerService : BaseService<AnswerEntity>, IAnswerService
     {
         private readonly IMapper _mapper;
@@ -28,7 +30,9 @@ namespace ZhiHu.Photo.Server.Services
 
         public async Task<IPagedList<AnswerDto>> QueryAnswerAndImageAsync(QueryParameter parameter)
         {
-            var pageList = await _work.GetRepository<AnswerEntity>().GetAll().OrderBy(a=> a.AnswerUpdatedTimeStamp).Include(a => a.Images)
+            var pageList = await _work.GetRepository<AnswerEntity>()
+                .GetAll().Include(a => a.Images)
+                .OrderBy(a => a.AnswerUpdatedTimeStamp)
                 .ToPagedListAsync(parameter.PageIndex, parameter.PageSize);
             return _mapper.Map<PagedList<AnswerDto>>(pageList);
         }

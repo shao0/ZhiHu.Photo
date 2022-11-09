@@ -2,12 +2,14 @@
 using Newtonsoft.Json;
 using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
 using ZhiHu.Photo.Server.Entities;
+using ZhiHu.Photo.Server.Models.Attributes;
 using ZhiHu.Photo.Server.Models.ZhiHu;
 using ZhiHu.Photo.Server.Services.Bases;
 using ZhiHu.Photo.Server.Services.Interfaces;
 
 namespace ZhiHu.Photo.Server.Services
 {
+    [AutoInjection(ServiceLifetime.Scoped)]
     public class ScanService : BaseService<AnswerEntity>, IScanService
     {
         private readonly IConfiguration _config;

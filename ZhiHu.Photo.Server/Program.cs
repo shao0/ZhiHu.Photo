@@ -40,15 +40,9 @@ var automakerConfig = new MapperConfiguration(config =>
 builder.Services.AddSingleton(automakerConfig.CreateMapper());
 
 builder.Services.AddTransient<GirlPhotoJob>();
-
-builder.Services.AddTransient<IAnswerService, AnswerService>();
-
-builder.Services.AddScoped<IScanService, ScanService>();
-
 builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 builder.Services.AddSingleton<IJobFactory, IocJobFactory>();
-builder.Services.AddSingleton<IDispatchService, DispatchService>();
-
+builder.Services.AddAutoServices();
 
 var app = builder.Build();
 
