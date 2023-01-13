@@ -6,6 +6,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:ZhiHu.Photo.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:ZhiHu.Photo.Models"
     xmlns:viewModels="clr-namespace:ZhiHu.Photo.ViewModels"
     d:Background="white"
     d:DesignHeight="450"
@@ -14,6 +15,18 @@
     <UserControl.DataContext>
         <viewModels:ShellViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <DataTemplate x:Key="DataTemplate.Text" DataType="{x:Type models:Information}">
+            <TextBlock Text="{Binding Content}" />
+        </DataTemplate>
+        <DataTemplate x:Key="DataTemplate.Image" DataType="{x:Type models:Information}">
+            <Border>
+                <Border.Background>
+                    <ImageBrush ImageSource="{Binding Content}" />
+                </Border.Background>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -89,11 +102,10 @@
                                     <Run Text="赞" />
                                     <Run Text="{Binding VoteUpCount}" />
                                     <Run Text="喜欢" />
-                                    <Run Text="{Binding ThanksCount}" />
-                                </TextBlock>
+                                    <Run Text="{Binding ThanksCount}" /></TextBlock>
                                 <TextBlock DockPanel.Dock="Bottom" Text="{Binding Excerpt}" />
                             </DockPanel>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Images}">
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding InfoList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Image Source="{Binding Url}" />

@@ -19,6 +19,7 @@ using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.Extensions;
 using ZhiHu.Photo.Models;
+using InfoType = ZhiHu.Photo.Models.InfoType;
 
 namespace ZhiHu.Photo.ViewModels
 {
@@ -47,7 +48,28 @@ namespace ZhiHu.Photo.ViewModels
             {
                 foreach (var answer in result.Data!.Items)
                 {
-                    Answers.Add(answer.Map<AnswerDto, AnswerInfo>());
+                    var answerInfo = answer.Map<AnswerDto, AnswerInfo>();
+                    if (!string.IsNullOrWhiteSpace(answerInfo.Excerpt))
+                    {
+                        var strings = answerInfo.Excerpt.Split("[图片]");
+                        for (var i = 0; i < strings.Length; i++)
+                        {
+                            var s = strings[i];
+                            if (!string.IsNullOrWhiteSpace(s))
+                            {
+                                var info = new Information();
+                                info.InfoType = InfoType.Text;
+                                info.Content = s;
+                            }
+                            if (answerInfo.Images != null && answerInfo.Images.Length > i)
+                            {
+                                var info = new Information();
+                                info.InfoType = InfoType.Image;
+                                info.Content = answerInfo.Images[i].Url;
+                            }
+                        }
+                    }
+                    Answers.Add(answerInfo);
                 }
 
                 PageMax = result.Data.TotalPages;

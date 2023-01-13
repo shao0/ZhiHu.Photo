@@ -1,8 +1,10 @@
-﻿using ZhiHu.Photo.Models.Bases;
+﻿using System.Collections.Generic;
+using System.Windows.Documents;
+using ZhiHu.Photo.Models.Bases;
 
 namespace ZhiHu.Photo.Models
 {
-    public class AnswerInfo: BaseInfo
+    public class AnswerInfo : BaseInfo
     {
         /// <summary>
         /// 头像地址
@@ -51,5 +53,10 @@ namespace ZhiHu.Photo.Models
 
 
         public ImageInfo[]? Images { get; set; }
+
+        /// <summary>
+        /// 详细
+        /// </summary>
+        public List<Information> InfoList { get; set; } = new();
     }
 }
