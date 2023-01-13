@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -24,13 +25,13 @@ namespace ZhiHu.Photo.ViewModels
     [ObservableObject]
     public partial class ShellViewModel
     {
-        private static string Url = "https://localhost:5001";
+        private static string Url = ConfigurationManager.AppSettings["Url"];
         private int PageSize = 10;
         public ObservableCollection<AnswerInfo> Answers { get; set; } = new();
 
         [ObservableProperty] private string _json;
 
-        [ObservableProperty] private int _pageMax = 10;
+        [ObservableProperty] private int _pageMax = 1;
 
         [ObservableProperty] private int _pageIndex = 1;
 

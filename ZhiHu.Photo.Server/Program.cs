@@ -30,7 +30,8 @@ builder.Services.AddDbContext<PhotoDbContext>(options =>
     .AddCustomRepository<AnswerEntity, AnswerRepository>()
     ;
 
-
+var url = builder.Configuration["Url"];
+builder.WebHost.UseUrls(url);
 
 var automakerConfig = new MapperConfiguration(config =>
 {

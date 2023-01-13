@@ -91,6 +91,7 @@
                                     <Run Text="喜欢" />
                                     <Run Text="{Binding ThanksCount}" />
                                 </TextBlock>
+                                <TextBlock DockPanel.Dock="Bottom" Text="{Binding Excerpt}" />
                             </DockPanel>
                             <ItemsControl Grid.Row="1" ItemsSource="{Binding Images}">
                                 <ItemsControl.ItemTemplate>
