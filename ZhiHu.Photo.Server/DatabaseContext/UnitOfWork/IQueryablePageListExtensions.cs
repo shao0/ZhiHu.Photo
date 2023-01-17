@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Specialized;
+using System.Reflection;
+using System.Runtime.Loader;
+using Microsoft.EntityFrameworkCore;
 using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Models;
 
@@ -6,6 +9,9 @@ namespace ZhiHu.Photo.Server.DatabaseContext.UnitOfWork
 {
     public static class IQueryablePageListExtensions
     {
+        public static Dictionary<string, int> CountDictionary { get; set; } = new();
+       
+
         /// <summary>
         /// Converts the specified source to <see cref="IPagedList{T}"/> by the specified <paramref name="pageSize"/> and <paramref name="pageSize"/>.
         /// 根据起始页和页大小转换成源
@@ -27,8 +33,20 @@ namespace ZhiHu.Photo.Server.DatabaseContext.UnitOfWork
             {
                 throw new ArgumentException($"indexFrom: {indexFrom} > pageIndex: {pageIndex}, must indexFrom <= pageIndex");
             }
-            //数据源大小
-            var count = await source.CountAsync(cancellationToken).ConfigureAwait(false);
+
+            int count;
+
+            var key = typeof(T).FullName;
+            if (CountDictionary.ContainsKey(key))
+            {
+                count = CountDictionary[key];
+            }
+            else
+            {
+                //数据源大小
+                count = await source.CountAsync(cancellationToken).ConfigureAwait(false);
+                CountDictionary.Add(key, count);
+            }
 
             var items = await source.Skip((pageIndex - indexFrom) * pageSize)
                                     .Take(pageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
@@ -40,7 +58,7 @@ namespace ZhiHu.Photo.Server.DatabaseContext.UnitOfWork
                 IndexFrom = indexFrom,
                 TotalCount = count,
                 Items = items,
-                TotalPages = (int)Math.Ceiling(count / (double)pageSize)
+                TotalPages = (int) Math.Ceiling(count / (double) pageSize)
             };
 
             return pagedList;

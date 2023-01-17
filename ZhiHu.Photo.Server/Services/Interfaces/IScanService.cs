@@ -15,5 +15,10 @@ namespace ZhiHu.Photo.Server.Services.Interfaces
         /// </summary>
         /// <returns></returns>
         Task ScanInsert();
+        /// <summary>
+        /// 刷新数据Images
+        /// </summary>
+        /// <returns></returns>
+        Task LocalRefreshImage();
     }
 }

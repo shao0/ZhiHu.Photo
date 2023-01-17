@@ -6,6 +6,7 @@ using ZhiHu.Photo.Server.Models.Attributes;
 using ZhiHu.Photo.Server.Models.ZhiHu;
 using ZhiHu.Photo.Server.Services.Bases;
 using ZhiHu.Photo.Server.Services.Interfaces;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ZhiHu.Photo.Server.Services
 {
@@ -13,6 +14,7 @@ namespace ZhiHu.Photo.Server.Services
     public class ScanService : BaseService<AnswerEntity>, IScanService
     {
         private readonly IConfiguration _config;
+        Regex _regex = new Regex("img src=\"([\\s\\S]*?)?source=1940ef5c\"");
 
         public ScanService(IUnitOfWork work, IConfiguration config) : base(work)
         {
@@ -62,8 +64,6 @@ namespace ZhiHu.Photo.Server.Services
             {
                 try
                 {
-                    var zz = "img src=\"([\\s\\S]*?)\"";
-                    var regex = new Regex(zz);
                     var info = await GetZhiHuInfoAsync(url);
                     if (info != null)
                     {
@@ -85,7 +85,7 @@ namespace ZhiHu.Photo.Server.Services
                             var images = new List<ImageEntity>();
                             if (!string.IsNullOrWhiteSpace(entity.Content))
                             {
-                                var matches = regex.Matches(entity.Content);
+                                var matches = _regex.Matches(entity.Content);
                                 foreach (Match match in matches)
                                 {
                                     var result = match.Result("$1");
@@ -138,5 +138,36 @@ namespace ZhiHu.Photo.Server.Services
             return info;
         }
 
+        public async Task LocalRefreshImage()
+        {
+            var answerRepository = _work.GetRepository<AnswerEntity>();
+            var answerAll = answerRepository.GetAll();
+            var index = 1;
+            while (true)
+            {
+                var entities = answerAll.Skip(index * 1).Take(1);
+                if (!entities.Any()) break;
+                var images = new List<ImageEntity>();
+                foreach (var entity in entities)
+                {
+                    if (!string.IsNullOrWhiteSpace(entity.Content))
+                    {
+                        var matches = _regex.Matches(entity.Content);
+                        foreach (Match match in matches)
+                        {
+                            var result = match.Result("$1");
+                            if (result.StartsWith("https://"))
+                            {
+                                images.Add(new ImageEntity { AnswerId = entity.Id,Url = result, CreateDate = DateTime.Now, UpdateDate = DateTime.Now });
+                            }
+                        }
+                        entity.Images = images;
+                    }
+                }
+                await _work.SaveChangesAsync();
+                index++;
+            }
+
+        }
     }
 }

@@ -72,5 +72,23 @@ namespace ZhiHu.Photo.Server.Controllers
                 return new ApiResponse(e.Message);
             }
         }
+        /// <summary>
+        /// 刷新数据Images
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[Action]")]
+        public async Task<ApiResponse> LocalRefreshImage()
+        {
+            try
+            {
+                 await _scan.LocalRefreshImage();
+                return new ApiResponse("正在刷新", true);
+            }
+            catch (Exception e)
+            {
+                return new ApiResponse(e.Message);
+            }
+        }
     }
 }

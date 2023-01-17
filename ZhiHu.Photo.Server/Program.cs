@@ -7,6 +7,7 @@ using ZhiHu.Photo.Server.DatabaseContext;
 using ZhiHu.Photo.Server.DatabaseContext.Repositories;
 using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
 using ZhiHu.Photo.Server.Entities;
+using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Models.AutoMappers;
 using ZhiHu.Photo.Server.Quartzs;
 using ZhiHu.Photo.Server.Quartzs.Jobs;
@@ -47,6 +48,8 @@ builder.Services.AddAutoServices();
 
 var app = builder.Build();
 
+//app.Services.InitialStatic();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -60,7 +63,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 //app.Services.GetService<IDispatchService>()?.Start();
 
 app.Run();

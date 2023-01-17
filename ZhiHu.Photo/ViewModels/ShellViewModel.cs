@@ -92,6 +92,7 @@ namespace ZhiHu.Photo.ViewModels
         {
             WeakReferenceMessenger.Default.Send("ShellView", MessageHelper.ShellViewScrollToTop);
             Answers.Clear();
+            ImageSource = null;
             var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}&Search=";
             var client = new HttpClient();
             Json = await client.GetStringAsync(url);
@@ -138,7 +139,7 @@ namespace ZhiHu.Photo.ViewModels
             }
             else
             {
-
+                Growl.Warning(result.Message);
             }
         }
         /// <summary>

@@ -3,7 +3,7 @@ using System.Runtime.Loader;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using ZhiHu.Photo.Server.Models.Attributes;
 
-namespace ZhiHu.Photo.Server.Entities
+namespace ZhiHu.Photo.Server.Extensions
 {
     public static class AutoInjectionExtension
     {
@@ -21,8 +21,7 @@ namespace ZhiHu.Photo.Server.Entities
                 .Select(p => p.StartsWith(directory) ? p : $"{directory}{p}")
                 .Where(File.Exists)
                 .Select(p => AssemblyLoadContext.Default.LoadFromAssemblyPath(p))
-                .SelectMany(a => a.GetTypes().Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface))
-                .Where(t => t.Name.EndsWith("Service"))
+                .SelectMany(a => a.GetTypes().Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && t.Name.EndsWith("Service")))
                 .Distinct();
             foreach (var t in types)
             {
@@ -37,8 +36,13 @@ namespace ZhiHu.Photo.Server.Entities
         private static void RegistrationType(IServiceCollection services, Type serviceType, Type interfaceType)
         {
             var attribute = serviceType.GetCustomAttribute<AutoInjectionAttribute>();
-            if (attribute == null) return;
-            switch (attribute.Lifetime)
+            var lifetime = ServiceLifetime.Transient;
+            if (attribute != null)
+            {
+                if (attribute.Ignore) return;
+                lifetime = attribute.Lifetime;
+            }
+            switch (lifetime)
             {
                 case ServiceLifetime.Singleton:
                     services.AddSingleton(interfaceType, serviceType);
