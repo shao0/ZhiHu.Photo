@@ -119,11 +119,11 @@ namespace ZhiHu.Photo.ViewModels
                             if (answerInfo.Images != null && answerInfo.Images.Length > i)
                             {
                                 info = new Information();
-                                if (answerInfo.Images[i].Url.ToLower().EndsWith(".jpg?source=1940ef5c"))
+                                if (answerInfo.Images[i].Url.ToLower().EndsWith(".jpg"))
                                 {
                                     info.InfoType = InfoType.Image;
                                 }
-                                else if (answerInfo.Images[i].Url.ToLower().EndsWith(".gif?source=1940ef5c"))
+                                else if (answerInfo.Images[i].Url.ToLower().EndsWith(".gif"))
                                 {
                                     info.InfoType = InfoType.Gif;
                                 }
