@@ -18,7 +18,6 @@ using ZhiHu.Photo.Server.Services.Interfaces;
 
 namespace ZhiHu.Photo.Server.Services
 {
-    [AutoInjection]
     public class AnswerService : BaseService<AnswerEntity>, IAnswerService
     {
         private readonly IMapper _mapper;
@@ -32,7 +31,6 @@ namespace ZhiHu.Photo.Server.Services
         {
             var pageList = await _work.GetRepository<AnswerEntity>()
                 .GetAll().Include(a => a.Images)
-                .OrderBy(a => a.AnswerUpdatedTimeStamp)
                 .ToPagedListAsync(parameter.PageIndex, parameter.PageSize);
             return _mapper.Map<PagedList<AnswerDto>>(pageList);
         }

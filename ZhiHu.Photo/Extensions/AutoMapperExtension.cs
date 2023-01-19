@@ -18,8 +18,8 @@ namespace ZhiHu.Photo.Extensions
 
         private static void CreateMapperConfiguration(IMapperConfigurationExpression config)
         {
-            config.CreateMap<AnswerDto, AnswerInfo>().ReverseMap();
-            config.CreateMap<ImageDto, ImageInfo>().ReverseMap();
+            config.CreateMap<AnswerDto, AnswerInfo>();
+            config.CreateMap<ImageDto, ImageInfo>();
         }
     }
 }

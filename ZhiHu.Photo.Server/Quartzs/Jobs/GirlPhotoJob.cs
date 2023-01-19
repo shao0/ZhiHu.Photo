@@ -18,10 +18,11 @@ namespace ZhiHu.Photo.Server.Quartzs.Jobs
         }
         public async Task Execute(IJobExecutionContext context)
         {
+            await Task.Yield();
             Console.WriteLine("开始执行");
             try
             {
-                await _scan.ScanInsert();
+                 _scan.ScanInsert();
             }
             catch (Exception e)
             {

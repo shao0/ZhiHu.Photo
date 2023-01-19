@@ -4,6 +4,7 @@ using ZhiHu.Photo.Common.Parameters;
 using ZhiHu.Photo.Server.Controllers.Base;
 using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Services.Interfaces;
+using ZhiHu.Photo.Server.Services.Interfaces.Bases;
 
 namespace ZhiHu.Photo.Server.Controllers
 {
@@ -42,11 +43,11 @@ namespace ZhiHu.Photo.Server.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Action]")]
-        public async Task<ApiResponse> StartScan()
+        public ApiResponse StartScan()
         {
             try
             {
-                await _scan.ScanInsert();
+                _scan.ScanInsert();
                 return new ApiResponse("已启动", true);
             }
             catch (Exception e)
@@ -54,17 +55,18 @@ namespace ZhiHu.Photo.Server.Controllers
                 return new ApiResponse(e.Message);
             }
         }
+
         /// <summary>
         /// 扫描更新最前面的
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Route("[Action]")]
-        public async Task<ApiResponse> StartLastScan()
+        public ApiResponse StartLastScan()
         {
             try
             {
-                await _scan.LastScanInsert();
+                _scan.LastScanInsert();
                 return new ApiResponse("已启动", true);
             }
             catch (Exception e)
@@ -78,12 +80,30 @@ namespace ZhiHu.Photo.Server.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Action]")]
-        public async Task<ApiResponse> LocalRefreshImage()
+        public ApiResponse LocalRefreshImage()
         {
             try
             {
-                 await _scan.LocalRefreshImage();
+                _scan.LocalRefreshImage();
                 return new ApiResponse("正在刷新", true);
+            }
+            catch (Exception e)
+            {
+                return new ApiResponse(e.Message);
+            }
+        }
+        /// <summary>
+        /// 刷新数据Images
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[Action]")]
+        public ApiResponse ImagePatching()
+        {
+            try
+            {
+                _scan.ImagePatching();
+                return new ApiResponse("正在补漏", true);
             }
             catch (Exception e)
             {

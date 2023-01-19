@@ -65,7 +65,7 @@ namespace ZhiHu.Photo.Models
         /// <summary>
         /// 高
         /// </summary>
-        [ObservableProperty] private double _h;
+        [ObservableProperty] private double _h = 100;
 
 
         async void Loaded()
@@ -99,7 +99,7 @@ namespace ZhiHu.Photo.Models
             }
             catch (Exception e)
             {
-                Growl.Error(e.Message);
+                Growl.Error($"{e.Message}\r\n{Content}");
             }
         }
 

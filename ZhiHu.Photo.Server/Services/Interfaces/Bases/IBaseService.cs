@@ -90,7 +90,11 @@ namespace ZhiHu.Photo.Server.Services.Interfaces.Bases
         /// <param name="tList"></param>
         Task DeleteAsync(IEnumerable<T> tList);
         #endregion
-
+        /// <summary>
+        /// 清表
+        /// </summary>
+        /// <returns></returns>
+        Task ClearTable();
         /// <summary>
         /// 提交编辑
         /// </summary>

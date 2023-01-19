@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Parameters;
@@ -105,6 +107,19 @@ namespace ZhiHu.Photo.Server.Services.Bases
             await CommitAsync();
         }
 
+        public async Task ClearTableaAsync()
+        {
+            await Task.Yield();
+            var type = typeof(T);
+            var tableName = type.Name;
+            var attribute = type.GetCustomAttribute<TableAttribute>();
+            if (attribute != null)
+            {
+                tableName = attribute.Name;
+            }
+
+            _work.ExecuteSqlCommand($"truncate table {tableName}");
+        }
         public async Task CommitAsync()
         {
             await _work.SaveChangesAsync();

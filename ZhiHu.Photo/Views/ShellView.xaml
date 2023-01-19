@@ -18,6 +18,7 @@
         <viewModels:ShellViewModel />
     </UserControl.DataContext>
     <UserControl.Resources>
+        <converters:TimeStampToDateTimeConverter x:Key="TimeStampToDateTimeC" />
         <DataTemplate x:Key="DataTemplate.Text" DataType="{x:Type models:Information}">
             <TextBlock
                 Width="{Binding W}"
@@ -123,6 +124,7 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" MinHeight="30" />
                                     <RowDefinition Height="*" />
+                                    <RowDefinition Height="auto" MinHeight="30" />
                                 </Grid.RowDefinitions>
                                 <DockPanel LastChildFill="False">
                                     <Border
@@ -134,11 +136,12 @@
                                             <ImageBrush ImageSource="{Binding PortraitUrl}" />
                                         </Border.Background>
                                     </Border>
-                                    <TextBlock
+                                    <TextBox
                                         Margin="2"
                                         DockPanel.Dock="Top"
                                         FontSize="15"
                                         FontWeight="Bold"
+                                        IsReadOnly="True"
                                         Text="{Binding NikeName}"
                                         TextWrapping="Wrap" />
                                     <TextBlock
@@ -163,36 +166,11 @@
                                     BorderThickness="0"
                                     ItemTemplateSelector="{StaticResource InformationConverter}"
                                     ItemsSource="{Binding InfoList}"
-                                    PreviewMouseWheel="UIElement_OnPreviewMouseWheel">
-                                    <!--<ItemsControl.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListBoxItem">
-                                                        <Grid Width="{Binding W}" Height="auto">
-                                                            <Grid.InputBindings>
-                                                                <MouseBinding
-                                                                    Command="{Binding DataContext.SelectedInfoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                                    CommandParameter="{Binding}"
-                                                                    MouseAction="LeftClick" />
-                                                            </Grid.InputBindings>
-                                                            <Border
-                                                                Margin="3"
-                                                                Background="White"
-                                                                CornerRadius="5"
-                                                                IsHitTestVisible="False">
-                                                                <Border.Effect>
-                                                                    <DropShadowEffect Direction="0" ShadowDepth="0" />
-                                                                </Border.Effect>
-                                                            </Border>
-                                                            <ContentPresenter Margin="5" IsHitTestVisible="False" />
-                                                        </Grid>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ItemsControl.ItemContainerStyle>-->
-                                </ItemsControl>
+                                    PreviewMouseWheel="UIElement_OnPreviewMouseWheel" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Margin="0,10,0,0"
+                                    Text="{Binding AnswerUpdatedTimeStamp, Converter={StaticResource TimeStampToDateTimeC}}" />
                             </Grid>
                         </Grid>
                     </DataTemplate>
@@ -218,11 +196,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Background="Transparent"
-                        Content="{Binding ImageSource}">
-                        <!--<Border.Background>
-                            <ImageBrush ImageSource="{Binding ImageSource}" />
-                        </Border.Background>-->
-                    </ContentControl>
+                        Content="{Binding ImageSource}" />
                 </Border>
             </Border>
         </Grid>
