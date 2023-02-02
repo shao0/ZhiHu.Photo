@@ -107,7 +107,7 @@ namespace ZhiHu.Photo.Server.Services.Bases
             await CommitAsync();
         }
 
-        public async Task ClearTableaAsync()
+        public async Task ClearTableAsync()
         {
             await Task.Yield();
             var type = typeof(T);

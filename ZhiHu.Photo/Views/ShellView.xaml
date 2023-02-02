@@ -138,23 +138,25 @@
                                     </Border>
                                     <TextBox
                                         Margin="2"
+                                        HorizontalAlignment="Left"
                                         DockPanel.Dock="Top"
                                         FontSize="15"
                                         FontWeight="Bold"
                                         IsReadOnly="True"
                                         Text="{Binding NikeName}"
                                         TextWrapping="Wrap" />
-                                    <TextBlock
-                                        Width="150"
-                                        Margin="2"
-                                        DockPanel.Dock="Bottom"
-                                        Text="{Binding Signature}"
-                                        TextWrapping="Wrap" />
                                     <TextBlock DockPanel.Dock="Right">
                                         <Run Text="赞" />
                                         <Run Text="{Binding VoteUpCount}" />
                                         <Run Text="喜欢" />
                                         <Run Text="{Binding ThanksCount}" /></TextBlock>
+                                    <TextBlock
+                                        Width="150"
+                                        Margin="2"
+                                        DockPanel.Dock="Bottom"
+                                        Foreground="#FF646496"
+                                        Text="{Binding Signature}"
+                                        TextWrapping="Wrap" />
                                     <TextBlock
                                         DockPanel.Dock="Bottom"
                                         Text="{Binding Excerpt}"
@@ -170,7 +172,8 @@
                                 <TextBlock
                                     Grid.Row="2"
                                     Margin="0,10,0,0"
-                                    Text="{Binding AnswerUpdatedTimeStamp, Converter={StaticResource TimeStampToDateTimeC}}" />
+                                    Foreground="#FF8590A6"
+                                    Text="{Binding AnswerUpdatedTimeStamp, Converter={StaticResource TimeStampToDateTimeC}, StringFormat={}编辑于:{0}}" />
                             </Grid>
                         </Grid>
                     </DataTemplate>

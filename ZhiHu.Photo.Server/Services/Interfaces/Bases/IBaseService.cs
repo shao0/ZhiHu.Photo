@@ -94,7 +94,7 @@ namespace ZhiHu.Photo.Server.Services.Interfaces.Bases
         /// 清表
         /// </summary>
         /// <returns></returns>
-        Task ClearTable();
+        Task ClearTableAsync();
         /// <summary>
         /// 提交编辑
         /// </summary>

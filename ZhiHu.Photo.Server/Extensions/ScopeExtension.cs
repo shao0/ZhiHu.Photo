@@ -27,7 +27,7 @@ namespace ZhiHu.Photo.Server.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static object? GetService(this IScopeControl control, Type type)
+        public static object GetService(this IScopeControl control, Type type)
         {
             var scope = Provider.CreateScope();
             control.ScopeDispose = () => scope.Dispose();

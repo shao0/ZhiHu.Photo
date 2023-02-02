@@ -14,7 +14,7 @@ namespace ZhiHu.Photo.Converters
                 var timeSpan = new TimeSpan(n*10000000L);
                 var dateTime = new DateTime(1970,1,1);
                 dateTime = dateTime.Add(timeSpan);
-                result = dateTime.ToString("yyyy年MM月dd日HH时mm分ss秒");
+                result = dateTime.ToString("yyyy-MM-dd HH:mm");
             }
 
             return result;

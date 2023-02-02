@@ -20,18 +20,24 @@ namespace ZhiHu.Photo.Server.Services
     {
         private readonly IConfiguration _config;
         private readonly Regex _regex;
-        private IAnswerService _answerService;
-        private IAnswerService AnswerService => _answerService == null ? this.GetService<IAnswerService>() : _answerService;
+        private IAnswerService? _AnswerService;
+        private IAnswerService AnswerService => _AnswerService ?? this.GetService<IAnswerService>();
 
-        private IImageService _imageService;
-        private IImageService ImageService => _imageService == null ? this.GetService<IImageService>() : _imageService;
+        private IImageService? _imageService;
+        private IImageService ImageService => _imageService ?? this.GetService<IImageService>();
+        /// <summary>
+        /// 问题Id
+        /// </summary>
         private string QuestionId { get; set; }
+        /// <summary>
+        /// 初始Url地址
+        /// </summary>
         private string InitialUrl { get; set; }
 
         public ScanService(IConfiguration config)
         {
             _config = config;
-            _regex = new("src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
+            _regex = new Regex("img src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
             QuestionId = _config.GetSection("ZhiHuApi:QuestionId").Value;
             InitialUrl = $"https://www.zhihu.com/question/{QuestionId}/answers/updated";
         }
@@ -90,8 +96,14 @@ namespace ZhiHu.Photo.Server.Services
         /// <returns></returns>
         private async Task InsertAnswerAsync(string url, bool isScan, int timeStamp)
         {
+            var sleep = 0;
             while (true)
             {
+                if (sleep > 10)
+                {
+                    await Task.Delay(3000);
+                    sleep = 0;
+                }
                 try
                 {
                     var info = await GetZhiHuInfoAsync(url);
@@ -134,10 +146,10 @@ namespace ZhiHu.Photo.Server.Services
                         if (!info.NextPage.IsEnd && !string.IsNullOrWhiteSpace(info.NextPage.NextUrl))
                         {
                             url = info.NextPage.NextUrl;
+                            sleep++;
                             continue;
                         }
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -183,8 +195,8 @@ namespace ZhiHu.Photo.Server.Services
             var client = new HttpClient();
             var html = await client.GetStringAsync(InitialUrl);
 
-            var _regex = new Regex(" type=\"text/json\">{\"initialState\":([\\s\\S]*?)}</script>");
-            var matches = _regex.Matches(html);
+            var regex = new Regex(" type=\"text/json\">{\"initialState\":([\\s\\S]*?)}</script>");
+            var matches = regex.Matches(html);
             var first = matches.FirstOrDefault();
             if (first != null)
             {
@@ -207,7 +219,7 @@ namespace ZhiHu.Photo.Server.Services
         private async Task<ZhiHuInfo?> GetZhiHuInfoAsync(string? url)
         {
             var json = string.Empty;
-            ZhiHuInfo? info;
+            ZhiHuInfo? info = null;
             try
             {
                 var client = new HttpClient();
@@ -219,9 +231,13 @@ namespace ZhiHu.Photo.Server.Services
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await using var sw = File.CreateText($"{AppDomain.CurrentDomain.BaseDirectory}/Error{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.json");
-                await sw.WriteAsync(json);
-                throw;
+                var logPath = $"{AppDomain.CurrentDomain.BaseDirectory}/Log";
+                if (!Directory.Exists(logPath))
+                {
+                    Directory.CreateDirectory(logPath);
+                }
+                await using var sw = File.CreateText($"{logPath}/Error{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.json");
+                await sw.WriteAsync($"{e.Message}\r\n=======================================================\r\n{json}");
             }
 
             return info;
@@ -231,7 +247,7 @@ namespace ZhiHu.Photo.Server.Services
         {
             try
             {
-                await ImageService.ClearTableaAsync();
+                await ImageService.ClearTableAsync();
                 var i = 0;
                 var size = 1000;
                 while (true)
@@ -309,7 +325,6 @@ namespace ZhiHu.Photo.Server.Services
                             continue;
                         }
                         images.AddRange(entity.Images);
-                        //await AnswerService.UpdateAsync(entity);
                     }
 
                     await ImageService.InsertAsync(images);
