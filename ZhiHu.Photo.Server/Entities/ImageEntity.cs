@@ -19,5 +19,10 @@ namespace ZhiHu.Photo.Server.Entities
         /// </summary>
         [ForeignKey("AnswerId")]
         public AnswerEntity Answer { get; set; }
+        /// <summary>
+        /// 关联视频
+        /// </summary>
+        [ForeignKey("VideoId")]
+        public VideoEntity? Video { get; set; }
     }
 }

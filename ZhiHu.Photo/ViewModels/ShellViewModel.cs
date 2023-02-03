@@ -1,28 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using HandyControl.Data;
-using HandyControl.Tools.Extension;
 using Newtonsoft.Json;
 using ZhiHu.Photo.Common.Dtos;
-using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Models;
+using ZhiHu.Photo.Controls;
 using ZhiHu.Photo.Extensions;
 using ZhiHu.Photo.Messages;
 using ZhiHu.Photo.Models;
@@ -33,7 +26,8 @@ namespace ZhiHu.Photo.ViewModels
     [ObservableObject]
     public partial class ShellViewModel
     {
-        private static string Url = ConfigurationManager.AppSettings["Url"];
+        private static string Url = ConfigurationManager.AppSettings["Web"];
+
         private int PageSize = 20;
 
         /// <summary>
@@ -56,7 +50,7 @@ namespace ZhiHu.Photo.ViewModels
         /// <summary>
         /// json
         /// </summary>
-        [ObservableProperty] private string _json;
+        [ObservableProperty] private string? _json;
         /// <summary>
         /// 最大页数
         /// </summary>
@@ -119,9 +113,17 @@ namespace ZhiHu.Photo.ViewModels
                             if (answerInfo.Images != null && answerInfo.Images.Length > i)
                             {
                                 info = new Information();
-                                if (answerInfo.Images[i].Url.ToLower().EndsWith(".jpg"))
+                                if (answerInfo.Images[i].Url.ToLower().EndsWith(".jpg") || answerInfo.Images[i].Url.ToLower().EndsWith(".jpeg"))
                                 {
-                                    info.InfoType = InfoType.Image;
+                                    if (answerInfo.Images[i].Video != null)
+                                    {
+                                        info.InfoType = InfoType.Video;
+                                        info.Url = answerInfo.Images[i].Video!.HUrl;
+                                    }
+                                    else
+                                    {
+                                        info.InfoType = InfoType.Image;
+                                    }
                                 }
                                 else if (answerInfo.Images[i].Url.ToLower().EndsWith(".gif"))
                                 {
@@ -164,17 +166,20 @@ namespace ZhiHu.Photo.ViewModels
             {
                 gif.Dispose();
             }
+            else if (ImageSource is PlayerControl player)
+            {
+                player.StopPlay();
+            }
 
             if (info.InfoType != InfoType.Text && info.Bytes != null)
             {
-                if (info.InfoType == InfoType.Image)
+                ImageSource = info.InfoType switch
                 {
-                    ImageSource = new Border { Background = new ImageBrush(info.Bytes.ConvertBitmapImage()) };
-                }
-                else
-                {
-                    ImageSource = new GifImage(new MemoryStream(info.Bytes));
-                }
+                    InfoType.Image => new Border { Background = new ImageBrush(info.Bytes.ConvertBitmapImage()) },
+                    InfoType.Gif => new GifImage(new MemoryStream(info.Bytes)),
+                    InfoType.Video => new PlayerControl { Url = info.Url },
+                    _ => ImageSource
+                };
                 var ratio = info.Width / info.Height;
                 var width = H * ratio;
                 var height = W / ratio;

@@ -12,6 +12,7 @@ namespace ZhiHu.Photo.Server.Models.AutoMappers
         {
             CreateMap<AnswerDto, AnswerEntity>().ReverseMap();
             CreateMap<ImageDto, ImageEntity>().ReverseMap();
+            CreateMap<VideoDto, VideoEntity>().ReverseMap();
             CreateMap(typeof(PagedList<>), typeof(PagedList<>));
         }
     }

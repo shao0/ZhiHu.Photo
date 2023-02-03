@@ -20,6 +20,7 @@ namespace ZhiHu.Photo.Extensions
         {
             config.CreateMap<AnswerDto, AnswerInfo>();
             config.CreateMap<ImageDto, ImageInfo>();
+            config.CreateMap<VideoDto, VideoInfo>();
         }
     }
 }

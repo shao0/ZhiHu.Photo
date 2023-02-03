@@ -27,6 +27,7 @@ namespace ZhiHu.Photo.Converters
                         break;
                     case InfoType.Gif:
                     case InfoType.Image:
+                    case InfoType.Video:
                         result = DataTemplateImage;
                         break;
                 }

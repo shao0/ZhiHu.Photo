@@ -20,19 +20,16 @@ namespace ZhiHu.Photo.Server.Services
 {
     public class AnswerService : BaseService<AnswerEntity>, IAnswerService
     {
-        private readonly IMapper _mapper;
 
-        public AnswerService(IUnitOfWork work, IMapper mapper) : base(work)
+        public AnswerService(IUnitOfWork work) : base(work)
         {
-            _mapper = mapper;
         }
 
-        public async Task<IPagedList<AnswerDto>> QueryAnswerAndImageAsync(QueryParameter parameter)
+        public async Task<IPagedList<AnswerEntity>> QueryAnswerAndImageAsync(QueryParameter parameter)
         {
-            var pageList = await _work.GetRepository<AnswerEntity>()
-                .GetAll().Include(a => a.Images)
+            return await _work.GetRepository<AnswerEntity>()
+                .GetAll().Include(a => a.Images).ThenInclude(a=> a.Video)
                 .ToPagedListAsync(parameter.PageIndex, parameter.PageSize);
-            return _mapper.Map<PagedList<AnswerDto>>(pageList);
         }
     }
 }

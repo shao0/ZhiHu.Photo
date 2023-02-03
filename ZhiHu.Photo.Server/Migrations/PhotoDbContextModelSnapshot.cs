@@ -95,11 +95,45 @@ namespace ZhiHu.Photo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("VideoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
+                    b.HasIndex("VideoId");
+
                     b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("ZhiHu.Photo.Server.Entities.VideoEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("HUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SUrl")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Video");
                 });
 
             modelBuilder.Entity("ZhiHu.Photo.Server.Entities.ImageEntity", b =>
@@ -110,7 +144,13 @@ namespace ZhiHu.Photo.Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ZhiHu.Photo.Server.Entities.VideoEntity", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoId");
+
                     b.Navigation("Answer");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("ZhiHu.Photo.Server.Entities.AnswerEntity", b =>

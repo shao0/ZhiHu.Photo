@@ -42,19 +42,23 @@
                     <ImageBrush ImageSource="{Binding Img}" />
                 </Border.Background>
                 <TextBlock
-                    Name="TextGif"
+                    Name="TextTip"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="25"
                     FontWeight="Black"
                     Foreground="White"
                     Opacity="0.3"
-                    Text="GIF"
                     Visibility="Collapsed" />
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding InfoType}" Value="Gif">
-                    <Setter TargetName="TextGif" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="TextTip" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="TextTip" Property="Text" Value="Gif" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding InfoType}" Value="Video">
+                    <Setter TargetName="TextTip" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="TextTip" Property="Text" Value="Video" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -139,6 +143,7 @@
                                     <TextBox
                                         Margin="2"
                                         HorizontalAlignment="Left"
+                                        BorderThickness="0"
                                         DockPanel.Dock="Top"
                                         FontSize="15"
                                         FontWeight="Bold"

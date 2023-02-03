@@ -15,6 +15,7 @@ namespace ZhiHu.Photo.Server.DatabaseContext
 
         public DbSet<AnswerEntity> Answer { get; set; }
         public DbSet<ImageEntity> Image { get; set; }
+        public DbSet<VideoEntity> Video { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

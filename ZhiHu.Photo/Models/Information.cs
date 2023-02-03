@@ -46,6 +46,10 @@ namespace ZhiHu.Photo.Models
                 }
             }
         }
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Url { get; set; } = string.Empty;
 
 
         /// <summary>
@@ -121,5 +125,9 @@ namespace ZhiHu.Photo.Models
         /// 动图
         /// </summary>
         Gif,
+        /// <summary>
+        /// 视频
+        /// </summary>
+        Video,
     }
 }

@@ -27,20 +27,20 @@ namespace ZhiHu.Photo.Server.Models.ZhiHu
         public int MediaCount { get; set; }
 
 
-        public static implicit operator AnswerEntity(ZhiHuDataInfo DataInfo)
+        public static implicit operator AnswerEntity(ZhiHuDataInfo dataInfo)
         {
             var entity = new AnswerEntity();
-            entity.PortraitUrl = DataInfo.Answer.User.PortraitUrl;
-            entity.NikeName = DataInfo.Answer.User.NikeName;
-            entity.Signature = DataInfo.Answer.User.Signature;
-            entity.Excerpt = DataInfo.Answer.Excerpt;
-            entity.Content = DataInfo.Answer.Content;
-            entity.MediaCount = DataInfo.MediaCount;
-            entity.ThanksCount = DataInfo.Answer.ThanksCount;
-            entity.VoteUpCount = DataInfo.Answer.VoteUpCount;
-            entity.AnswerCreatedTimeStamp = DataInfo.Answer.CreatedTimeStamp;
-            entity.AnswerUpdatedTimeStamp = DataInfo.Answer.UpdatedTimeStamp;
-            entity.Attachment = DataInfo.Answer.Attachment != null;
+            entity.PortraitUrl = dataInfo.Answer.User.PortraitUrl;
+            entity.NikeName = dataInfo.Answer.User.NikeName;
+            entity.Signature = dataInfo.Answer.User.Signature;
+            entity.Excerpt = dataInfo.Answer.Excerpt;
+            entity.Content = dataInfo.Answer.Content;
+            entity.MediaCount = dataInfo.MediaCount;
+            entity.ThanksCount = dataInfo.Answer.ThanksCount;
+            entity.VoteUpCount = dataInfo.Answer.VoteUpCount;
+            entity.AnswerCreatedTimeStamp = dataInfo.Answer.CreatedTimeStamp;
+            entity.AnswerUpdatedTimeStamp = dataInfo.Answer.UpdatedTimeStamp;
+            entity.Attachment = dataInfo.Answer.Attachment != null;
 
             return entity;
         }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.Common.Parameters;
 using ZhiHu.Photo.Server.Controllers.Base;
@@ -12,11 +14,13 @@ namespace ZhiHu.Photo.Server.Controllers
     {
         private readonly IAnswerService _service;
         private readonly IScanService _scan;
+        private readonly IMapper _mapper;
 
-        public AnswerController(IAnswerService service, IScanService scan)
+        public AnswerController(IAnswerService service, IScanService scan, IMapper mapper)
         {
             _service = service;
             _scan = scan;
+            _mapper = mapper;
         }
         /// <summary>
         /// 查询回答
@@ -30,7 +34,7 @@ namespace ZhiHu.Photo.Server.Controllers
             try
             {
                 var list = await _service.QueryAnswerAndImageAsync(parameter);
-                return new ApiResponse(true, list);
+                return new ApiResponse(true, _mapper.Map<PagedList<AnswerDto>>(list));
             }
             catch (Exception e)
             {

@@ -17,8 +17,10 @@ namespace ZhiHu.Photo.Models
         /// 图片地址
         /// </summary>
         public string Url { get; set; }
-
-
+        /// <summary>
+        /// 视频
+        /// </summary>
+        public VideoInfo? Video { get; set; }
 
 
     }

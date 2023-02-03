@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System.Text;
 using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Services.Interfaces.Bases;
+using Quartz.Util;
 
 namespace ZhiHu.Photo.Server.Services
 {
@@ -20,6 +21,8 @@ namespace ZhiHu.Photo.Server.Services
     {
         private readonly IConfiguration _config;
         private readonly Regex _regex;
+        private readonly Regex _regexVideo;
+        private readonly string _videoApiUrl;
         private IAnswerService? _AnswerService;
         private IAnswerService AnswerService => _AnswerService ?? this.GetService<IAnswerService>();
 
@@ -38,6 +41,8 @@ namespace ZhiHu.Photo.Server.Services
         {
             _config = config;
             _regex = new Regex("img src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
+            _regexVideo = new Regex("data-poster=\"([\\s\\S]*?)\" data-lens-id=\"([\\s\\S]*?)\">");
+            _videoApiUrl = "https://lens.zhihu.com/api/v4/videos/";
             QuestionId = _config.GetSection("ZhiHuApi:QuestionId").Value;
             InitialUrl = $"https://www.zhihu.com/question/{QuestionId}/answers/updated";
         }
@@ -99,7 +104,7 @@ namespace ZhiHu.Photo.Server.Services
             var sleep = 0;
             while (true)
             {
-                if (sleep > 10)
+                if (sleep > 5)
                 {
                     await Task.Delay(3000);
                     sleep = 0;
@@ -113,6 +118,7 @@ namespace ZhiHu.Photo.Server.Services
                         foreach (var data in info.Datas)
                         {
                             var entity = (AnswerEntity) data;
+                            entity.CreateDate = entity.UpdateDate = DateTime.Now;
                             if (isScan)
                             {
                                 if (timeStamp > 0 && entity.AnswerUpdatedTimeStamp <= timeStamp) continue;
@@ -136,7 +142,18 @@ namespace ZhiHu.Photo.Server.Services
                                         images.Add(new ImageEntity { Url = result, CreateDate = DateTime.Now, UpdateDate = DateTime.Now });
                                     }
                                 }
-
+                                var matchesVideos = _regexVideo.Matches(entity.Content);
+                                foreach (Match matchesVideo in matchesVideos)
+                                {
+                                    var image = matchesVideo.Result("$1");
+                                    var id = matchesVideo.Result("$2");
+                                    if (string.IsNullOrWhiteSpace(image))
+                                    {
+                                        break;
+                                    }
+                                    var video = await GetVideoByVideoIdAsync(id);
+                                    images.Add(new ImageEntity { Url = image, CreateDate = DateTime.Now, UpdateDate = DateTime.Now, Video = video });
+                                }
                                 entity.Images = images;
                             }
                             answers.Add(entity);
@@ -185,10 +202,40 @@ namespace ZhiHu.Photo.Server.Services
             return url;
         }
         /// <summary>
+        /// 获取视频通过视频Id
+        /// </summary>
+        /// <returns></returns>
+        private async Task<VideoEntity> GetVideoByVideoIdAsync(string id)
+        {
+            var video = new VideoEntity();
+            video.CreateDate = video.UpdateDate = DateTime.Now;
+            var client = new HttpClient();
+            var json = await client.GetStringAsync($"{_videoApiUrl}{id}");
+            var jObject = JObject.Parse(json);
+            if (jObject.ContainsKey("playlist"))
+            {
+                if (jObject["playlist"]["SD"] != null)
+                {
+                    video.SUrl = jObject["playlist"]["SD"]["play_url"].ToString();
+                }
+                if (jObject["playlist"]["LD"] != null)
+                {
+
+                    video.LUrl = jObject["playlist"]["LD"]["play_url"].ToString();
+                }
+                if (jObject["playlist"]["HD"] != null)
+                {
+                    video.HUrl = jObject["playlist"]["HD"]["play_url"].ToString();
+                }
+            }
+
+            return video;
+        }
+        /// <summary>
         /// 通过问题id获取回答url
         /// </summary>
         /// <returns></returns>
-        async Task<string> GetUrlByQuestionIdAsync()
+        private async Task<string> GetUrlByQuestionIdAsync()
         {
             var result = string.Empty;
 
