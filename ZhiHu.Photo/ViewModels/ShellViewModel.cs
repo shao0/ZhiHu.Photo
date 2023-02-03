@@ -30,6 +30,15 @@ namespace ZhiHu.Photo.ViewModels
 
         private int PageSize = 20;
 
+        private PlayerControl _Player;
+        /// <summary>
+        /// 视频播放控件
+        /// </summary>
+        private PlayerControl Player
+        {
+            get { return _Player ??= new PlayerControl(); }
+        }
+
         /// <summary>
         /// 选择查看的详细信息
         /// </summary>
@@ -173,13 +182,20 @@ namespace ZhiHu.Photo.ViewModels
 
             if (info.InfoType != InfoType.Text && info.Bytes != null)
             {
-                ImageSource = info.InfoType switch
+                switch (info.InfoType)
                 {
-                    InfoType.Image => new Border { Background = new ImageBrush(info.Bytes.ConvertBitmapImage()) },
-                    InfoType.Gif => new GifImage(new MemoryStream(info.Bytes)),
-                    InfoType.Video => new PlayerControl { Url = info.Url },
-                    _ => ImageSource
-                };
+                    case InfoType.Image:
+                        ImageSource = new Border { Background = new ImageBrush(info.Bytes.ConvertBitmapImage()) };
+                        break;
+                    case InfoType.Gif:
+                        ImageSource = new GifImage(new MemoryStream(info.Bytes));
+                        break;
+                    case InfoType.Video:
+                        Player.Url = info.Url;
+                        ImageSource = Player;
+                        break;
+                }
+
                 var ratio = info.Width / info.Height;
                 var width = H * ratio;
                 var height = W / ratio;
