@@ -42,7 +42,7 @@ namespace ZhiHu.Photo.Server.Services
         public ScanService(IConfiguration config)
         {
             _config = config;
-            _host = "https://www.zhihu.com";
+            _host = "www.zhihu.com";
             _regex = new Regex("img src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
             _regexVideo = new Regex("data-poster=\"([\\s\\S]*?)\" data-lens-id=\"([\\s\\S]*?)\">");
             _videoApiUrl = "https://lens.zhihu.com/api/v4/videos/";
@@ -212,7 +212,7 @@ namespace ZhiHu.Photo.Server.Services
         {
             var video = new VideoEntity();
             video.CreateDate = video.UpdateDate = DateTime.Now;
-            var json = await WebHelper.GetJsonAsync($"{_videoApiUrl}{id}", _host, InitialUrl);
+            var json = await WebHelper.GetJsonAsync($"{_videoApiUrl}{id}");
             var jObject = JObject.Parse(json);
             if (jObject.ContainsKey("playlist"))
             {

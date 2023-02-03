@@ -29,7 +29,13 @@ namespace ZhiHu.Photo.ViewModels
         private static string Url = ConfigurationManager.AppSettings["Web"];
 
         private int PageSize = 20;
-
+        /// <summary>
+        /// 选择的详细信息
+        /// </summary>
+        private Information _ShownInfo { get; set; }
+        /// <summary>
+        /// 视频播放控件
+        /// </summary>
         private PlayerControl _Player;
         /// <summary>
         /// 视频播放控件
@@ -171,13 +177,15 @@ namespace ZhiHu.Photo.ViewModels
         [RelayCommand]
         void SelectedInfo(Information info)
         {
-            if (ImageSource is GifImage gif)
+            if (info == _ShownInfo) return;
+            switch (ImageSource)
             {
-                gif.Dispose();
-            }
-            else if (ImageSource is PlayerControl player)
-            {
-                player.StopPlay();
+                case GifImage gif:
+                    gif.Dispose();
+                    break;
+                case PlayerControl player:
+                    player.StopPlay().GetAwaiter();
+                    break;
             }
 
             if (info.InfoType != InfoType.Text && info.Bytes != null)
