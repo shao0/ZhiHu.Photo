@@ -13,6 +13,7 @@ using System.Text;
 using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Services.Interfaces.Bases;
 using Quartz.Util;
+using ZhiHu.Photo.Server.Helpers;
 
 namespace ZhiHu.Photo.Server.Services
 {
@@ -23,6 +24,7 @@ namespace ZhiHu.Photo.Server.Services
         private readonly Regex _regex;
         private readonly Regex _regexVideo;
         private readonly string _videoApiUrl;
+        private readonly string _host;
         private IAnswerService? _AnswerService;
         private IAnswerService AnswerService => _AnswerService ?? this.GetService<IAnswerService>();
 
@@ -40,6 +42,7 @@ namespace ZhiHu.Photo.Server.Services
         public ScanService(IConfiguration config)
         {
             _config = config;
+            _host = "https://www.zhihu.com";
             _regex = new Regex("img src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
             _regexVideo = new Regex("data-poster=\"([\\s\\S]*?)\" data-lens-id=\"([\\s\\S]*?)\">");
             _videoApiUrl = "https://lens.zhihu.com/api/v4/videos/";
@@ -104,9 +107,9 @@ namespace ZhiHu.Photo.Server.Services
             var sleep = 0;
             while (true)
             {
-                if (sleep > 5)
+                if (sleep > 3)
                 {
-                    await Task.Delay(3000);
+                    await Task.Delay(1000);
                     sleep = 0;
                 }
                 try
@@ -209,8 +212,7 @@ namespace ZhiHu.Photo.Server.Services
         {
             var video = new VideoEntity();
             video.CreateDate = video.UpdateDate = DateTime.Now;
-            var client = new HttpClient();
-            var json = await client.GetStringAsync($"{_videoApiUrl}{id}");
+            var json = await WebHelper.GetJsonAsync($"{_videoApiUrl}{id}", _host, InitialUrl);
             var jObject = JObject.Parse(json);
             if (jObject.ContainsKey("playlist"))
             {
@@ -239,8 +241,7 @@ namespace ZhiHu.Photo.Server.Services
         {
             var result = string.Empty;
 
-            var client = new HttpClient();
-            var html = await client.GetStringAsync(InitialUrl);
+            var html = await WebHelper.GetJsonAsync(InitialUrl, _host, InitialUrl);
 
             var regex = new Regex(" type=\"text/json\">{\"initialState\":([\\s\\S]*?)}</script>");
             var matches = regex.Matches(html);
@@ -262,29 +263,35 @@ namespace ZhiHu.Photo.Server.Services
         /// 异步获取知乎信息
         /// </summary>
         /// <param name="url"></param>
+        /// <param name="number"></param>
         /// <returns></returns>
-        private async Task<ZhiHuInfo?> GetZhiHuInfoAsync(string? url)
+        private async Task<ZhiHuInfo?> GetZhiHuInfoAsync(string? url, int number = 0)
         {
+            if (number >= 5)
+            {
+                return null;
+            }
             var json = string.Empty;
             ZhiHuInfo? info = null;
             try
             {
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.Add("referer", InitialUrl);
-                json = await client.GetStringAsync(url);
+                json = await WebHelper.GetJsonAsync(url, _host, InitialUrl);
                 info = JsonConvert.DeserializeObject<ZhiHuInfo>(json);
                 info.Json = json;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                var logPath = $"{AppDomain.CurrentDomain.BaseDirectory}/Log";
-                if (!Directory.Exists(logPath))
-                {
-                    Directory.CreateDirectory(logPath);
-                }
-                await using var sw = File.CreateText($"{logPath}/Error{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.json");
-                await sw.WriteAsync($"{e.Message}\r\n=======================================================\r\n{json}");
+                await Task.Delay(3000);
+                number++;
+                return await GetZhiHuInfoAsync(url, number);
+                //Console.WriteLine(e);
+                //var logPath = $"{AppDomain.CurrentDomain.BaseDirectory}/Log";
+                //if (!Directory.Exists(logPath))
+                //{
+                //    Directory.CreateDirectory(logPath);
+                //}
+                //await using var sw = File.CreateText($"{logPath}/Error{DateTime.Now:yyyy-MM-dd-HH-mm-ss}.json");
+                //await sw.WriteAsync($"{e.Message}\r\n=======================================================\r\n{json}");
             }
 
             return info;
