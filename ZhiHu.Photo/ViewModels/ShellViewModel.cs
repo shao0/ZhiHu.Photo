@@ -133,7 +133,18 @@ namespace ZhiHu.Photo.ViewModels
                                     if (answerInfo.Images[i].Video != null)
                                     {
                                         info.InfoType = InfoType.Video;
-                                        info.Url = answerInfo.Images[i].Video!.HUrl;
+                                        if (!string.IsNullOrWhiteSpace(answerInfo.Images[i].Video?.HUrl))
+                                        {
+                                            info.Url = answerInfo.Images[i].Video.HUrl;
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(answerInfo.Images[i].Video?.SUrl))
+                                        {
+                                            info.Url = answerInfo.Images[i].Video.SUrl;
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(answerInfo.Images[i].Video?.LUrl))
+                                        {
+                                            info.Url = answerInfo.Images[i].Video.LUrl;
+                                        }
                                     }
                                     else
                                     {
@@ -199,8 +210,15 @@ namespace ZhiHu.Photo.ViewModels
                         ImageSource = new GifImage(new MemoryStream(info.Bytes));
                         break;
                     case InfoType.Video:
-                        Player.Url = info.Url;
-                        ImageSource = Player;
+                        if (!string.IsNullOrWhiteSpace(info.Url))
+                        {
+                            Player.Url = info.Url;
+                            ImageSource = Player;
+                        }
+                        else
+                        {
+                            ImageSource = new Border { Background = new ImageBrush(info.Bytes.ConvertBitmapImage()) };
+                        }
                         break;
                 }
 
