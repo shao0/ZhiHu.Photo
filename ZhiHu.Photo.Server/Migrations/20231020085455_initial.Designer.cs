@@ -11,8 +11,8 @@ using ZhiHu.Photo.Server.DatabaseContext;
 namespace ZhiHu.Photo.Server.Migrations
 {
     [DbContext(typeof(PhotoDbContext))]
-    [Migration("20230203125413_Initial")]
-    partial class Initial
+    [Migration("20231020085455_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

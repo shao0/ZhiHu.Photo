@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
@@ -30,7 +31,44 @@ builder.Services.AddDbContext<PhotoDbContext>(options =>
     .AddUnitOfWork<PhotoDbContext>()
     .AddCustomRepository<AnswerEntity, AnswerRepository>()
     ;
+builder.Services.AddSwaggerGen(
+    options =>
+    {
+        options.SwaggerDoc("V1", new OpenApiInfo()
+        {
+            Title = "测试医保读卡",
+            Version = "1.0",
+            Description = "测试医保读卡",
+        });
+        var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ZhiHu.Photo.Server.xml");
+        options.IncludeXmlComments(file, true);
 
+        #region JWT验证
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Description = "输入 JWT",
+            Name = "Authorization",
+            BearerFormat = "JWT",
+            Scheme = "Bearer"
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
+        #endregion
+    });
 var url = builder.Configuration["Url"];
 builder.WebHost.UseUrls(url);
 
@@ -54,7 +92,7 @@ app.Services.Initial();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(n => n.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"));
 }
 
 

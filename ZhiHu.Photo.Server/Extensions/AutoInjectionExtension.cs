@@ -21,7 +21,7 @@ namespace ZhiHu.Photo.Server.Extensions
                 .Select(p => p.StartsWith(directory) ? p : $"{directory}{p}")
                 .Where(File.Exists)
                 .Select(p => AssemblyLoadContext.Default.LoadFromAssemblyPath(p))
-                .SelectMany(a => a.GetTypes().Where(t => t.IsClass && !t.IsAbstract && !t.IsInterface && t.Name.EndsWith("Service")))
+                .SelectMany(a => a.GetTypes().Where(t => t is { IsClass: true, IsAbstract: false, IsInterface: false } && t.Name.EndsWith("Service")))
                 .Distinct();
             foreach (var t in types)
             {
