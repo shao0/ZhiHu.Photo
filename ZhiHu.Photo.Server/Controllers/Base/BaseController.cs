@@ -2,7 +2,7 @@
 
 namespace ZhiHu.Photo.Server.Controllers.Base
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class BaseController: ControllerBase
     {

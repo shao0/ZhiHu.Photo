@@ -89,7 +89,7 @@ var app = builder.Build();
 app.Services.Initial();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(n => n.SwaggerEndpoint("/swagger/V1/swagger.json", "V1"));
