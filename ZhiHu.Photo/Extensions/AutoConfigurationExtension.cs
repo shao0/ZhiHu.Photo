@@ -42,6 +42,7 @@ namespace ZhiHu.Photo.Extensions
             {
                 service.AddConfiguration(t);
             }
+            return service;
         }
     }
 }

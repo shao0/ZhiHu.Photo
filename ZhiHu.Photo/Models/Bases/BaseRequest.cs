@@ -9,10 +9,6 @@ namespace ZhiHu.Photo.Models.Bases
     public class BaseRequest
     {
         /// <summary>
-        /// 请求方式
-        /// </summary>
-        public Method Method { get; set; }
-        /// <summary>
         /// 路由
         /// </summary>
         public string Route { get; set; }
@@ -26,9 +22,4 @@ namespace ZhiHu.Photo.Models.Bases
         public object Parameter { get; set; }
     }
 
-    public enum Method
-    {
-        Get,
-        Post,
-    }
 }

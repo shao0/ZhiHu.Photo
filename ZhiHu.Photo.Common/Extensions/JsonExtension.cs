@@ -30,6 +30,6 @@ namespace ZhiHu.Photo.Common.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string ToJson<T>(this T obj) => JsonSerializer.Serialize(obj);
+        public static string ToJson<T>(this T obj) => obj == null ? string.Empty : JsonSerializer.Serialize(obj);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ZhiHu.Photo.Common.Dtos;
+using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.Models;
 
 namespace ZhiHu.Photo.Extensions
@@ -18,6 +19,8 @@ namespace ZhiHu.Photo.Extensions
 
         private static void CreateMapperConfiguration(IMapperConfigurationExpression config)
         {
+            config.CreateMap<ApiResponse, ApiResponse>();
+            config.CreateMap(typeof(PagedList<>), typeof(PagedList<>));
             config.CreateMap<AnswerDto, AnswerInfo>();
             config.CreateMap<ImageDto, ImageInfo>();
             config.CreateMap<VideoDto, VideoInfo>();

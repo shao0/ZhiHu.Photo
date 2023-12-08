@@ -8,6 +8,9 @@ using ZhiHu.Photo.Attributes;
 using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.DataAccess.Contacts;
+using ZhiHu.Photo.Extensions;
+using ZhiHu.Photo.Models;
+using ZhiHu.Photo.Models.Bases;
 using ZhiHu.Photo.Services.Contacts;
 
 namespace ZhiHu.Photo.Services
@@ -22,10 +25,11 @@ namespace ZhiHu.Photo.Services
             _zhiHu = zhiHu;
         }
 
-        public ApiResponse<PagedList<AnswerDto>> GetAnswerList(int pageIndex, int pageSize)
+        public async Task<ApiResponse<PagedList<AnswerInfo>>> GetAnswerList(int pageIndex, int pageSize)
         {
-            
-            return new();
+            var result = await _zhiHu.GetList(new BaseRequest { Route = $"/api/Answer/GetAll?PageIndex={pageIndex - 1}&PageSize={pageSize}" });
+
+            return result.Map<ApiResponse<PagedList<AnswerInfo>>>();
         }
     }
 }

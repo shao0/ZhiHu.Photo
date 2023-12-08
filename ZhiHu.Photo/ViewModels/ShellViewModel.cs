@@ -109,15 +109,16 @@ namespace ZhiHu.Photo.ViewModels
             WeakReferenceMessenger.Default.Send("ShellView", MessageHelper.ShellViewScrollToTop);
             Answers.Clear();
             ImageSource = null;
-            var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}";
-            var client = new HttpClient();
-            Json = await client.GetStringAsync(url);
-            var result = JsonSerializer.Deserialize<ApiResponse<PagedList<AnswerDto>>>(Json);
+            //var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}";
+            //var client = new HttpClient();
+            //Json = await client.GetStringAsync(url);
+            //var result = JsonSerializer.Deserialize<ApiResponse<PagedList<AnswerDto>>>(Json);
+            var result = await _answer.GetAnswerList(PageIndex, PageSize);
             if (result.Status)
             {
                 foreach (var answer in result.Data!.Items)
                 {
-                    var answerInfo = answer.Map<AnswerInfo>();
+                    var answerInfo = answer;//.Map<AnswerInfo>();
                     if (!string.IsNullOrWhiteSpace(answerInfo.Excerpt))
                     {
                         var strings = answerInfo.Excerpt.Split("[图片]");
