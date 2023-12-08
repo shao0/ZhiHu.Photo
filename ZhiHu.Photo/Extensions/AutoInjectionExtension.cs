@@ -1,28 +1,38 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Loader;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using ZhiHu.Photo.Server.Models.Attributes;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using ZhiHu.Photo.Attributes;
+using ZhiHu.Photo.Helpers;
 
-namespace ZhiHu.Photo.Server.Extensions
+namespace ZhiHu.Photo.Extensions
 {
     public static class AutoInjectionExtension
     {
-        public static void AddAutoServices(this IServiceCollection services, params string[] dllNames)
+        /// <summary>
+        /// 自动注入
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="dllNames">程序集名称</param>
+        /// <param name="suffixNames">服务后缀</param>
+        /// <returns></returns>
+        public static IServiceCollection AutoInjection(this IServiceCollection services, string[]? dllNames = null, string[]? suffixNames = null)
         {
-            var directory = AppDomain.CurrentDomain.BaseDirectory;
-            if (dllNames.Length == 0)
+            if (suffixNames == null || suffixNames.Length == 0)
             {
-                var LocalPathDll = Assembly.GetExecutingAssembly().Location;
-                dllNames = new[] { LocalPathDll };
+                suffixNames = new[] { "Service" };
             }
 
-            var types = dllNames
-                .Select(n => n.ToLower().EndsWith(".dll") ? n : $"{n}.dll")
-                .Select(p => p.StartsWith(directory) ? p : $"{directory}{p}")
-                .Where(File.Exists)
-                .Select(p => AssemblyLoadContext.Default.LoadFromAssemblyPath(p))
-                .SelectMany(a => a.GetTypes().Where(t => t is { IsClass: true, IsAbstract: false, IsInterface: false } && t.Name.EndsWith("Service")))
-                .Distinct();
+            var types = AssemblyHelper
+                .GetAssemblyTypes(dllNames)
+                .Where(t =>
+                    t is { IsClass: true, IsAbstract: false, IsInterface: false }
+                    && suffixNames.Any(s => t.Name.EndsWith(s)));
             foreach (var t in types)
             {
                 var _interface = t.GetInterfaces().FirstOrDefault(i => i.Name == $"I{t.Name}");
@@ -31,8 +41,14 @@ namespace ZhiHu.Photo.Server.Extensions
                     RegistrationType(services, t, _interface);
                 }
             }
+            return services;
         }
-
+        /// <summary>
+        /// 注册服务
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="serviceType"></param>
+        /// <param name="interfaceType"></param>
         private static void RegistrationType(IServiceCollection services, Type serviceType, Type interfaceType)
         {
             var attribute = serviceType.GetCustomAttribute<AutoInjectionAttribute>();

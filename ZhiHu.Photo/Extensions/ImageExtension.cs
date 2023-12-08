@@ -22,12 +22,9 @@ namespace ZhiHu.Photo.Extensions
         {
             try
             {
-                byte[] array;
-                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    array = new byte[fileStream.Length];
-                    fileStream.Read(array, 0, array.Length);
-                }
+                using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+                var array = new byte[fileStream.Length];
+                fileStream.Read(array, 0, array.Length);
                 return array;
             }
             catch (Exception e)
@@ -44,7 +41,7 @@ namespace ZhiHu.Photo.Extensions
         {
             try
             {
-                BitmapImage bitmapImage = new BitmapImage();
+                var bitmapImage = new BitmapImage();
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.CreateOptions = BitmapCreateOptions.DelayCreation;
                 bitmapImage.BeginInit();
@@ -68,7 +65,7 @@ namespace ZhiHu.Photo.Extensions
         {
             try
             {
-                BitmapImage bitmapImage = new BitmapImage();
+                var bitmapImage = new BitmapImage();
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.CreateOptions = BitmapCreateOptions.DelayCreation;
                 bitmapImage.BeginInit();
@@ -92,7 +89,7 @@ namespace ZhiHu.Photo.Extensions
         {
             try
             {
-                BitmapImage bitmapImage = new BitmapImage();
+                var bitmapImage = new BitmapImage();
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.CreateOptions = BitmapCreateOptions.DelayCreation;
                 bitmapImage.BeginInit();

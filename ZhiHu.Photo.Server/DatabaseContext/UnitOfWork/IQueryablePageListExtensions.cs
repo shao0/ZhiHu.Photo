@@ -9,7 +9,7 @@ namespace ZhiHu.Photo.Server.DatabaseContext.UnitOfWork
 {
     public static class IQueryablePageListExtensions
     {
-        public static Dictionary<string, int> CountDictionary { get; set; } = new();
+        //public static Dictionary<string, int> CountDictionary { get; set; } = new();
        
 
         /// <summary>
@@ -36,17 +36,18 @@ namespace ZhiHu.Photo.Server.DatabaseContext.UnitOfWork
 
             int count;
 
-            var key = typeof(T).FullName;
-            if (CountDictionary.ContainsKey(key))
-            {
-                count = CountDictionary[key];
-            }
-            else
-            {
-                //数据源大小
-                count = await source.CountAsync(cancellationToken).ConfigureAwait(false);
-                CountDictionary.Add(key, count);
-            }
+            //var key = typeof(T).FullName;
+            //if (CountDictionary.ContainsKey(key))
+            //{
+            //    count = CountDictionary[key];
+            //}
+            //else
+            //{
+            //    //数据源大小
+            //    count = await source.CountAsync(cancellationToken).ConfigureAwait(false);
+            //    CountDictionary.Add(key, count);
+            //}
+            count = await source.CountAsync(cancellationToken).ConfigureAwait(false);
 
             var items = await source.Skip((pageIndex - indexFrom) * pageSize)
                                     .Take(pageSize).ToListAsync(cancellationToken).ConfigureAwait(false);

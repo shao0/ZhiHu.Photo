@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,13 +13,13 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HandyControl.Controls;
 using HandyControl.Data;
-using Newtonsoft.Json;
 using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.Controls;
 using ZhiHu.Photo.Extensions;
 using ZhiHu.Photo.Messages;
 using ZhiHu.Photo.Models;
+using ZhiHu.Photo.Services.Contacts;
 using InfoType = ZhiHu.Photo.Models.InfoType;
 
 namespace ZhiHu.Photo.ViewModels
@@ -26,6 +27,12 @@ namespace ZhiHu.Photo.ViewModels
     [ObservableObject]
     public partial class ShellViewModel
     {
+        private readonly IAnswerService _answer;
+
+        public ShellViewModel(IAnswerService answer)
+        {
+            _answer = answer;
+        }
         private static string Url = ConfigurationManager.AppSettings["Web"];
 
         private int PageSize = 20;
@@ -102,15 +109,16 @@ namespace ZhiHu.Photo.ViewModels
             WeakReferenceMessenger.Default.Send("ShellView", MessageHelper.ShellViewScrollToTop);
             Answers.Clear();
             ImageSource = null;
-            var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}&Search=";
-            var client = new HttpClient();
-            Json = await client.GetStringAsync(url);
-            var result = JsonConvert.DeserializeObject<ApiResponse<PagedList<AnswerDto>>>(Json);
+            //var url = $"{Url}/api/Answer/GetAll?PageIndex={PageIndex - 1}&PageSize={PageSize}";
+            //var client = new HttpClient();
+            //Json = await client.GetStringAsync(url);
+            //var result = JsonSerializer.Deserialize<ApiResponse<PagedList<AnswerDto>>>(Json);
+            var result = await _answer.GetAnswerList(PageIndex, PageSize);
             if (result.Status)
             {
                 foreach (var answer in result.Data!.Items)
                 {
-                    var answerInfo = answer.Map<AnswerDto, AnswerInfo>();
+                    var answerInfo = answer;//.Map<AnswerInfo>();
                     if (!string.IsNullOrWhiteSpace(answerInfo.Excerpt))
                     {
                         var strings = answerInfo.Excerpt.Split("[图片]");

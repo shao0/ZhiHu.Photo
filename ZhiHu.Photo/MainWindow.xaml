@@ -9,6 +9,4 @@
     Title="MainWindow"
     Width="800"
     Height="450"
-    mc:Ignorable="d">
-    <views:ShellView />
-</Window>
+    mc:Ignorable="d" />
