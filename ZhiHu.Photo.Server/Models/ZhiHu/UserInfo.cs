@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace ZhiHu.Photo.Server.Models.ZhiHu
 {
@@ -8,19 +8,19 @@ namespace ZhiHu.Photo.Server.Models.ZhiHu
         /// <summary>
         /// 头像地址
         /// </summary>
-        [JsonProperty("avatar_url")]
+        [JsonPropertyName("avatar_url")]
         public string? PortraitUrl { get; set; }
 
         /// <summary>
         /// 名称
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string? NikeName { get; set; }
 
         /// <summary>
         /// 签名
         /// </summary>
-        [JsonProperty("headline")]
+        [JsonPropertyName("headline")]
         public string? Signature { get; set; }
     }
 }

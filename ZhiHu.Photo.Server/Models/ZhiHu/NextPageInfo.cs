@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace ZhiHu.Photo.Server.Models.ZhiHu
 {
@@ -10,17 +10,17 @@ namespace ZhiHu.Photo.Server.Models.ZhiHu
         /// <summary>
         /// 第几页
         /// </summary>
-        [JsonProperty("page")]
+        [JsonPropertyName("page")]
         public int Page { get; set; }
         /// <summary>
         /// 是否最后一页
         /// </summary>
-        [JsonProperty("is_end")]
+        [JsonPropertyName("is_end")]
         public bool IsEnd { get; set; }
         /// <summary>
         /// 下页地址
         /// </summary>
-        [JsonProperty("next")]
+        [JsonPropertyName("next")]
         public string? NextUrl { get; set; }
         
     }

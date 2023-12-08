@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using ZhiHu.Photo.Server.Models.ZhiHu.Bases;
 
 namespace ZhiHu.Photo.Server.Models.ZhiHu
@@ -9,7 +9,7 @@ namespace ZhiHu.Photo.Server.Models.ZhiHu
         /// <summary>
         /// 地址
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string? Url { get; set; }
     }
 }

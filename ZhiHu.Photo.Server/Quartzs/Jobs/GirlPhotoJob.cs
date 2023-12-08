@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using AutoMapper;
-using Newtonsoft.Json;
-using Quartz;
-using ZhiHu.Photo.Server.Entities;
-using ZhiHu.Photo.Server.Models.ZhiHu;
+﻿using Quartz;
 using ZhiHu.Photo.Server.Services.Interfaces;
 
 namespace ZhiHu.Photo.Server.Quartzs.Jobs

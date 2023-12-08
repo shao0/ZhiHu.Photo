@@ -1,23 +1,17 @@
 ﻿using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using ZhiHu.Photo.Server.DatabaseContext.UnitOfWork;
 using ZhiHu.Photo.Server.Entities;
 using ZhiHu.Photo.Server.Models.Attributes;
 using ZhiHu.Photo.Server.Models.ZhiHu;
-using ZhiHu.Photo.Server.Services.Bases;
 using ZhiHu.Photo.Server.Services.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 using System.Text;
+using System.Text.Json.Nodes;
+using ZhiHu.Photo.Common.Extensions;
 using ZhiHu.Photo.Server.Extensions;
-using ZhiHu.Photo.Server.Services.Interfaces.Bases;
-using Quartz.Util;
 using ZhiHu.Photo.Server.Helpers;
 
 namespace ZhiHu.Photo.Server.Services
 {
-    [AutoInjection(ServiceLifetime.Singleton)]
+    //[AutoInjection(ServiceLifetime.Singleton)]
     public class ScanService : IScanService
     {
         private readonly IConfiguration _config;
@@ -25,11 +19,8 @@ namespace ZhiHu.Photo.Server.Services
         private readonly Regex _regexVideo;
         private readonly string _videoApiUrl;
         private readonly string _host;
-        private IAnswerService? _AnswerService;
-        private IAnswerService AnswerService => _AnswerService ?? this.GetService<IAnswerService>();
-
-        private IImageService? _imageService;
-        private IImageService ImageService => _imageService ?? this.GetService<IImageService>();
+        private readonly IAnswerService _answer;
+        private readonly IImageService _image;
         /// <summary>
         /// 问题Id
         /// </summary>
@@ -39,9 +30,11 @@ namespace ZhiHu.Photo.Server.Services
         /// </summary>
         private string InitialUrl { get; set; }
 
-        public ScanService(IConfiguration config)
+        public ScanService(IConfiguration config, IImageService image, IAnswerService answer)
         {
             _config = config;
+            _image = image;
+            _answer = answer;
             _host = "www.zhihu.com";
             _regex = new Regex("img src=\"([\\s\\S]*?)\\?source=([\\s\\S]*?)\"");
             _regexVideo = new Regex("data-poster=\"([\\s\\S]*?)\" data-lens-id=\"([\\s\\S]*?)\">");
@@ -55,7 +48,7 @@ namespace ZhiHu.Photo.Server.Services
             try
             {
                 var url = await FirstGetUrlAsync();
-                var all = AnswerService.FindAllAsync(_ => true);
+                var all = _answer.FindAllAsync(_ => true);
                 var max = all.Any() ? all.Max(e => e.AnswerUpdatedTimeStamp) : 0;
                 await InsertAnswerAsync(url, true, max);
             }
@@ -64,17 +57,13 @@ namespace ZhiHu.Photo.Server.Services
                 Console.WriteLine(e);
                 throw;
             }
-            finally
-            {
-                ScopeDispose?.Invoke();
-            }
         }
 
         public async void LastScanInsert()
         {
             try
             {
-                var all = AnswerService.FindAllAsync(e => true);
+                var all = _answer.FindAllAsync(e => true);
                 if (all.Any())
                 {
                     var entity = all.OrderBy(i => i.Id).Last();
@@ -89,10 +78,6 @@ namespace ZhiHu.Photo.Server.Services
             {
                 Console.WriteLine(e);
                 throw;
-            }
-            finally
-            {
-                ScopeDispose?.Invoke();
             }
         }
         /// <summary>
@@ -162,7 +147,7 @@ namespace ZhiHu.Photo.Server.Services
                             answers.Add(entity);
                         }
 
-                        await AnswerService.UpdateAsync(answers);
+                        await _answer.UpdateAsync(answers);
                         if (!info.NextPage.IsEnd && !string.IsNullOrWhiteSpace(info.NextPage.NextUrl))
                         {
                             url = info.NextPage.NextUrl;
@@ -213,7 +198,7 @@ namespace ZhiHu.Photo.Server.Services
             var video = new VideoEntity();
             video.CreateDate = video.UpdateDate = DateTime.Now;
             var json = await WebHelper.GetJsonAsync($"{_videoApiUrl}{id}");
-            var jObject = JObject.Parse(json);
+            var jObject = JsonNode.Parse(json).AsObject();
             if (jObject.ContainsKey("playlist"))
             {
                 if (jObject["playlist"]["SD"] != null)
@@ -253,7 +238,7 @@ namespace ZhiHu.Photo.Server.Services
                 sb.Append("{\"data\":");
                 sb.Append(json);
                 sb.Append('}');
-                var jObject = JObject.Parse(sb.ToString());
+                var jObject = JsonNode.Parse(sb.ToString());
                 result = jObject["data"]["question"]["updatedAnswers"][QuestionId]["next"].ToString();
             }
 
@@ -276,7 +261,7 @@ namespace ZhiHu.Photo.Server.Services
             try
             {
                 json = await WebHelper.GetJsonAsync(url, _host, InitialUrl);
-                info = JsonConvert.DeserializeObject<ZhiHuInfo>(json);
+                info = json.ToObject<ZhiHuInfo>();
                 info.Json = json;
             }
             catch (Exception e)
@@ -301,13 +286,13 @@ namespace ZhiHu.Photo.Server.Services
         {
             try
             {
-                await ImageService.ClearTableAsync();
+                await _image.ClearTableAsync();
                 var i = 0;
                 var size = 1000;
                 while (true)
                 {
                     var images = new List<ImageEntity>();
-                    var answers = AnswerService.FindAllAsync(_ => true).Skip(i * size).Take(size).ToArray();
+                    var answers = _answer.FindAllAsync(_ => true).Skip(i * size).Take(size).ToArray();
                     if (!answers.Any()) return;
                     foreach (var entity in answers)
                     {
@@ -319,7 +304,7 @@ namespace ZhiHu.Photo.Server.Services
                         images.AddRange(entity.Images);
                     }
 
-                    await ImageService.InsertAsync(images);
+                    await _image.InsertAsync(images);
                     i++;
 
                 }
@@ -328,10 +313,6 @@ namespace ZhiHu.Photo.Server.Services
             {
                 Console.WriteLine(e);
                 throw;
-            }
-            finally
-            {
-                ScopeDispose?.Invoke();
             }
 
         }
@@ -369,7 +350,7 @@ namespace ZhiHu.Photo.Server.Services
                 while (true)
                 {
                     var images = new List<ImageEntity>();
-                    var answers = AnswerService.FindAllAsync(a => !a.Images.Any()).Skip(i * size).Take(size).ToArray();
+                    var answers = _answer.FindAllAsync(a => !a.Images.Any()).Skip(i * size).Take(size).ToArray();
                     if (!answers.Any()) return;
                     foreach (var entity in answers)
                     {
@@ -381,7 +362,7 @@ namespace ZhiHu.Photo.Server.Services
                         images.AddRange(entity.Images);
                     }
 
-                    await ImageService.InsertAsync(images);
+                    await _image.InsertAsync(images);
                     i++;
 
                 }
@@ -391,11 +372,7 @@ namespace ZhiHu.Photo.Server.Services
                 Console.WriteLine(e);
                 throw;
             }
-            finally
-            {
-                ScopeDispose?.Invoke();
-            }
         }
-        public Action ScopeDispose { get; set; }
+
     }
 }

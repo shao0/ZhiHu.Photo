@@ -9,23 +9,37 @@ namespace ZhiHu.Photo.Server.Quartzs
     public class IocJobFactory : IJobFactory
     {
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentDictionary<string, IServiceScope> scopes { get; set; } = new();
+        private ConcurrentDictionary<string, IServiceScope> Scopes { get; } = new();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceProvider"></param>
         public IocJobFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
-            var serviceScope = scopes.ContainsKey(bundle.JobDetail.JobType.FullName) ? scopes[bundle.JobDetail.JobType.FullName] : _serviceProvider.CreateScope();
+            if (!Scopes.TryGetValue(bundle.JobDetail.JobType.FullName, out var serviceScope))
+            {
+                serviceScope ??= _serviceProvider.CreateScope();
+            }
             return serviceScope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
         }
 
         public void ReturnJob(IJob job)
         {
-            var disposable = job as IDisposable;
-            disposable?.Dispose();
-            if (scopes.ContainsKey(job.GetType().FullName)) scopes[job.GetType().FullName].Dispose();
+            var key = job.GetType().FullName;
+            if (job is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+
+            if (!Scopes.ContainsKey(key)) return;
+            Scopes[key].Dispose();
+            Scopes.TryRemove(key, out _);
+
         }
     }
 }
