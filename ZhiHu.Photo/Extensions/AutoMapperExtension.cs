@@ -10,11 +10,11 @@ namespace ZhiHu.Photo.Extensions
         /// <summary>
         /// 转换
         /// </summary>
-        /// <typeparam name="TS"></typeparam>
         /// <typeparam name="T"></typeparam>
         /// <param name="s"></param>
         /// <returns></returns>
-        public static T Map<TS, T>(this TS s) => Instance.Map<T>(s);
+        public static T Map<T>(this object s)
+            => Instance.Map<T>(s);
 
         private static void CreateMapperConfiguration(IMapperConfigurationExpression config)
         {

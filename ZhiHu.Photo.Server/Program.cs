@@ -36,9 +36,9 @@ builder.Services.AddSwaggerGen(
     {
         options.SwaggerDoc("V1", new OpenApiInfo()
         {
-            Title = "测试医保读卡",
+            Title = "知乎回答",
             Version = "1.0",
-            Description = "测试医保读卡",
+            Description = "知乎回答",
         });
         var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ZhiHu.Photo.Server.xml");
         options.IncludeXmlComments(file, true);
