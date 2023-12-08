@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
 namespace ZhiHu.Photo.Server.Models.ZhiHu.Bases
 {
@@ -11,12 +12,12 @@ namespace ZhiHu.Photo.Server.Models.ZhiHu.Bases
         /// <summary>
         /// 宽
         /// </summary>
-        [JsonProperty("width")]
+        [JsonPropertyName("width")]
         public double Width { get; set; }
         /// <summary>
         /// 高
         /// </summary>
-        [JsonProperty("height")]
+        [JsonPropertyName("height")]
         public double Height { get; set; }
     }
 }

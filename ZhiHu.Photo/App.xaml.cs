@@ -26,6 +26,7 @@ namespace ZhiHu.Photo
         protected override void OnStartup(StartupEventArgs e)
         {
             ServiceProvider = ConfigureServices(new ServiceCollection())
+                .AutoMapper()
                 .AutoInjection(suffixNames: new[] { "Service", "DataAccess" })
                 .AutoConfiguration(new[] { "ZhiHu.Photo.Configurations.Models" })
                 .BuildServiceProvider();

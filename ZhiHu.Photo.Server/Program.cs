@@ -86,8 +86,6 @@ builder.Services.AddAutoServices();
 
 var app = builder.Build();
 
-app.Services.Initial();
-
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 {

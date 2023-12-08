@@ -2,7 +2,6 @@
 using System.Reflection;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Interfaces;
 using ZhiHu.Photo.Common.Models;

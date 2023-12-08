@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
 using ZhiHu.Photo.Server.Entities.Bases;
 using ZhiHu.Photo.Server.Models.Attributes;
 

@@ -3,7 +3,7 @@ using ZhiHu.Photo.Server.Services.Interfaces.Bases;
 
 namespace ZhiHu.Photo.Server.Services.Interfaces
 {
-    public interface IScanService : IScopeControl
+    public interface IScanService
     {
         /// <summary>
         /// 最小更新时间插入
