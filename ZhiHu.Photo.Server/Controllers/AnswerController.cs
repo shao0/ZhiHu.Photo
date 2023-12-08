@@ -24,11 +24,11 @@ namespace ZhiHu.Photo.Server.Controllers
         }
         /// <summary>
         /// 查询回答
+        /// Who your daddy
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("[Action]")]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParameter parameter)
         {
             try
@@ -46,7 +46,6 @@ namespace ZhiHu.Photo.Server.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("[Action]")]
         public ApiResponse StartScan()
         {
             try
@@ -65,7 +64,6 @@ namespace ZhiHu.Photo.Server.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("[Action]")]
         public ApiResponse StartLastScan()
         {
             try
@@ -83,7 +81,6 @@ namespace ZhiHu.Photo.Server.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("[Action]")]
         public ApiResponse LocalRefreshImage()
         {
             try
@@ -101,7 +98,6 @@ namespace ZhiHu.Photo.Server.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("[Action]")]
         public ApiResponse ImagePatching()
         {
             try
