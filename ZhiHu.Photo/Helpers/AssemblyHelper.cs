@@ -41,7 +41,7 @@ namespace ZhiHu.Photo.Helpers
         /// </summary>
         /// <param name="dllNames"></param>
         /// <returns></returns>
-        public static IEnumerable<Type> GetAssemblyTypes(string[]? dllNames = null)
+        public static IEnumerable<Type> GetAssemblyTypes( params string[]? dllNames )
         {
             if (dllNames == null || dllNames.Length == 0)
             {

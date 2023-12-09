@@ -4,6 +4,7 @@ using ZhiHu.Photo.Common.Dtos;
 using ZhiHu.Photo.Common.Models;
 using ZhiHu.Photo.Common.Parameters;
 using ZhiHu.Photo.Server.Controllers.Base;
+using ZhiHu.Photo.Server.Entities;
 using ZhiHu.Photo.Server.Extensions;
 using ZhiHu.Photo.Server.Services.Interfaces;
 using ZhiHu.Photo.Server.Services.Interfaces.Bases;
@@ -23,8 +24,7 @@ namespace ZhiHu.Photo.Server.Controllers
             _mapper = mapper;
         }
         /// <summary>
-        /// 查询回答
-        /// Who your daddy
+        /// 获取回答
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
@@ -35,6 +35,36 @@ namespace ZhiHu.Photo.Server.Controllers
             {
                 var list = await _service.QueryAnswerAndImageAsync(parameter);
                 return new ApiResponse(true, _mapper.Map<PagedList<AnswerDto>>(list));
+            }
+            catch (Exception e)
+            {
+                return new ApiResponse(e.Message);
+            }
+        }
+        /// <summary>
+        /// 查询回答
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        //[HttpGet]
+        public async Task<ApiResponse> Query([FromQuery] QueryParameter parameter)
+        {
+            try
+            {
+                var list = new List<AnswerEntity>();
+                for (int i = 1; i < 10; i++)
+                {
+                    var e = new AnswerEntity();
+                    list.Add(e);
+                    e.NikeName = (i << 3).ToString();
+                    e.Signature = (i << 6).ToString();
+                    e.Excerpt = (i << 9).ToString();
+                }
+
+                var queryString = parameter.Search.QueryString<AnswerEntity>();
+                var predicate = queryString.Compile();
+                var array = list.Where(predicate);
+                return new ApiResponse(true,array);
             }
             catch (Exception e)
             {

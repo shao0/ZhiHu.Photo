@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZhiHu.Photo.Common.Extensions;
 
 namespace ZhiHu.Photo.Models.Bases
 {
@@ -20,6 +21,8 @@ namespace ZhiHu.Photo.Models.Bases
         /// 参数
         /// </summary>
         public object Parameter { get; set; }
+
+        public string ParameterJson => Parameter.ToJson();
     }
 
 }
